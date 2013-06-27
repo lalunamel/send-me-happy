@@ -1,0 +1,25 @@
+source 'https://rubygems.org'
+
+gem 'rails', '4.0.0'
+gem 'mysql2'
+gem 'sass-rails', '~> 4.0.0'
+gem 'uglifier', '>= 1.3.0'
+gem 'jquery-rails'
+gem 'turbolinks' # build one giant js app
+gem 'jbuilder', '~> 1.2' # easy json usage
+gem 'puma'
+gem 'capistrano', group: :development
+gem 'phony_rails' # phone validation
+gem 'twilio-ruby' # twillio rails gem
+
+
+group :doc do
+  # bundle exec rake doc:rails generates the API under doc/api.
+  gem 'sdoc', require: false
+end
+
+group :development, :test do
+  gem 'rspec-rails', '~> 2.0'
+  gem 'debugger'
+  gem 'factory_girl_rails'
+end
