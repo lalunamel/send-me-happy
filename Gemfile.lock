@@ -27,6 +27,7 @@ GEM
       tzinfo (~> 0.3.37)
     arel (4.0.0)
     atomic (1.1.10)
+    bcrypt-ruby (3.0.1)
     builder (3.1.4)
     capistrano (2.15.4)
       highline
@@ -60,6 +61,7 @@ GEM
     factory_girl_rails (4.2.1)
       factory_girl (~> 4.2.0)
       railties (>= 3.0.0)
+    forgery (0.5.0)
     highline (1.6.19)
     hike (1.2.3)
     i18n (0.6.4)
@@ -163,9 +165,11 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bcrypt-ruby
   capistrano
   debugger
   factory_girl_rails
+  forgery
   jbuilder (~> 1.2)
   jquery-rails
   mysql2

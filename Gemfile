@@ -11,6 +11,7 @@ gem 'puma'
 gem 'capistrano', group: :development
 gem 'phony_rails' # phone validation
 gem 'twilio-ruby' # twillio rails gem
+gem 'bcrypt-ruby'
 
 
 group :doc do
@@ -21,5 +22,6 @@ end
 group :development, :test do
   gem 'rspec-rails', '~> 2.0'
   gem 'debugger'
-  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', :require => false
+	gem 'forgery' # random data generation
 end
