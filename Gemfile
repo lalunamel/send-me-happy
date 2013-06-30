@@ -12,6 +12,8 @@ gem 'capistrano', group: :development
 gem 'phony_rails' # phone validation
 gem 'twilio-ruby' # twillio rails gem
 gem 'bcrypt-ruby'
+gem 'json'
+gem "active_model_serializers"
 
 
 group :doc do
@@ -21,7 +23,7 @@ end
 
 group :development, :test do
   gem 'rspec-rails', '~> 2.0'
-  gem 'debugger'
+  gem 'byebug'
   gem 'factory_girl_rails', :require => false
 	gem 'forgery' # random data generation
 end

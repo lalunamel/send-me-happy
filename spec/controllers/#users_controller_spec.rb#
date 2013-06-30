@@ -1,0 +1,48 @@
+require 'spec_helper'
+
+describe UsersController do
+
+  describe "GET 'show'" do
+    it "should return http success" do
+      user = create :user
+      get :show, :format => :json, :id => user.id
+
+      expect(response).to be_success
+    end
+
+    it "should render the proper json response" do
+      user = create :user
+      get :show, :format => :json, :id => user.id
+
+      expectedJson = JSON({
+        "id" => user.id,
+        "phone" => user.phone,
+        "message_frequency" => user.message_frequency
+      })
+
+      expect(response.body).to eq expectedJson
+    end
+  end
+
+  describe "POST 'create'" do
+    it "returns http success" do
+      pending "Use the user serializer to create the user json"
+      user = build :user
+      post :create, :format => :json, phone: user.phone, message_frequency: user.message_frequency
+      debugger
+      actualUser    = JSON User.first.as_json.reject { |k,v| %w(created_at updated_at).include? k }
+      returnedUser  = JSON response.body
+
+      response.should be_success
+      expect(actualUser).to eq returnedUser
+    end
+  end
+
+  # describe "PUT 'update'" do
+  #   it "returns http success" do
+  #     put :update, :format => :json, :id => 1
+  #     response.should be_success
+  #   end
+  # end
+
+end

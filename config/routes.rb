@@ -1,4 +1,10 @@
 SendMeHappy2::Application.routes.draw do
+  get "users/:id" => 'users#show'
+  post "users" => 'users#create'
+  put "users/:id" => 'users#update'
+  
+  match "*notaroute" => "application#routing_error", via: [:get, :post, :put, :delete]
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
