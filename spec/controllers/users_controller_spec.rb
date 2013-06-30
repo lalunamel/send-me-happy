@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe UsersController do
+  def expected_user(user) 
+    {
+      id: user.id,
+      phone: user.phone,
+      message_frequency: user.message_frequency
+    }
+  end
+
+  def expected_json(user) 
+    generate_jsend_json("success", expected_user(user))
+  end
 
   describe "GET 'show'" do
     it "should return http success" do
@@ -14,13 +25,7 @@ describe UsersController do
       user = create :user
       get :show, :format => :json, :id => user.id
 
-      expectedJson = JSON({
-        "id" => user.id,
-        "phone" => user.phone,
-        "message_frequency" => user.message_frequency
-      })
-
-      expect(response.body).to eq expectedJson
+      expect(response.body).to eq expected_json(user)
     end
   end
 
@@ -33,9 +38,8 @@ describe UsersController do
       response.should be_success
 
       user = User.first
-      userJson = user.active_model_serializer.new(user).to_json
 
-      expect(userJson).to eq response.body
+      expect(expected_json(user)).to eq response.body
     end
 
     it "should create a valid user when given a phone number but not a message_frequency" do
@@ -46,9 +50,8 @@ describe UsersController do
       response.should be_success
 
       user = User.first
-      userJson = user.active_model_serializer.new(user).to_json
-
-      expect(userJson).to eq response.body
+      
+      expect(expected_json(user)).to eq response.body
     end
 
     it "should not create a user when a phone is not given" do
@@ -66,10 +69,9 @@ describe UsersController do
       put :update, :format => :json, id: user.id, phone: user.phone, message_frequency: user.message_frequency 
 
       user = User.first
-      userJson = user.active_model_serializer.new(user).to_json
-
+      
       response.should be_success
-      expect(userJson).to eq response.body
+      expect(expected_json(user)).to eq response.body
     end
   end
 

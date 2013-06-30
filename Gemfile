@@ -14,6 +14,7 @@ gem 'twilio-ruby' # twillio rails gem
 gem 'bcrypt-ruby'
 gem 'json'
 gem "active_model_serializers"
+gem 'jsend-rails'
 
 
 group :doc do
