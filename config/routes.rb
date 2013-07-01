@@ -1,7 +1,7 @@
 SendMeHappy2::Application.routes.draw do
-  get "users/:id" => 'users#show'
+  get "users" => 'users#show'
   post "users" => 'users#create'
-  put "users/:id" => 'users#update'
+  put "users" => 'users#update'
   
   match "*notaroute" => "application#routing_error", via: [:get, :post, :put, :delete]
 

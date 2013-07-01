@@ -13,8 +13,9 @@ gem 'phony_rails' # phone validation
 gem 'twilio-ruby' # twillio rails gem
 gem 'bcrypt-ruby'
 gem 'json'
-gem "active_model_serializers"
-gem 'jsend-rails'
+gem "active_model_serializers" # for formatting json responses
+gem 'jsend-rails' # for rendering jsend responses
+gem 'indefinite_article' # for prepending a or an to a word without or with a vowel
 
 
 group :doc do

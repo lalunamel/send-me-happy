@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   
 	# GET users/1
   def show
-    user = User.find params[:id]
+    user = User.find params.require(:id)
   	respond_to do |format|
   		format.json { render_jsend(success: SerializerUtil::serialize_to_hash(user)) }
   	end
@@ -11,7 +11,7 @@ class UsersController < ApplicationController
 
   # POST users/1
   def create
-  	user = User.create(params.permit(:phone, :message_frequency))
+  	user = User.create!(params.permit(:phone, :message_frequency))
   	respond_to do |format|
   		format.json { render_jsend(success: SerializerUtil::serialize_to_hash(user)) }
   	end
@@ -19,7 +19,7 @@ class UsersController < ApplicationController
 
   # PUT users/1
   def update
-    user = User.find(params[:id])
+    user = User.find(params.require(:id))
     if user.update_attributes params.permit(:phone, :message_frequency)
       respond_to do |format|
         format.json { render_jsend(success: SerializerUtil::serialize_to_hash(user)) }
