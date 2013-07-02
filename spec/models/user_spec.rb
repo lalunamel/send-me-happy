@@ -54,4 +54,8 @@ describe User do
   		expect(user2.save).to be_false
   	end
   end
+
+  context "messages" do
+    
+  end
 end

@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+	has_many :messages
 
 	phony_normalize :phone, :as => :phone, :default_country_code => 'US'
 	validates 			:phone, :phony_plausible => true,
