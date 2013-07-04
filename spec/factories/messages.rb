@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :message do
-		text { Forgery::LoremIpsum.sentences(2) }
+		template
 		user
   end
 end

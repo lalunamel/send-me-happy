@@ -1,27 +1,28 @@
 require 'spec_helper'
 
 describe Message do
-  it "should be created with a user and a text" do
+  it "should be created with a user and a template" do
   	user = create :user
-  	text = "hello world!"
-  	message = Message.new({user: user, text: text})
+  	template = create :template
+  	message = Message.new(user: user, template: template)
 
 		expect(message.save).to be_true
-  	expect(message.user).to eq user
-  	expect(message.text).to eq text
+  	expect(Message.first).to eq message
   end
 
   it "should require a user" do
-  	message = build :message, text: "abc", user: nil
+  	message = build :message,  user: nil
 
   	expect(message.save).to be_false
   end
 
-  it "should require a text" do
+  it "should require a template" do
   	user = create :user
-  	message = build :message, user: user, text: ""
+  	message = build :message, user: user, template: nil
 
   	expect(message.save).to be_false
+    expect(message.errors.count).to eq 1
+    expect(message.errors[:template][0]).to eq "can't be blank"
   end
-  
+
 end
