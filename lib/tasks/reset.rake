@@ -7,7 +7,7 @@ namespace :db do
 	end	
 
 	desc "Totally reset both the dev and test database"
-	task :allreset => :environment do
+	task :resetall => :environment do
 		sh "rake db:totalreset"
 		sh "rake db:totalreset RAILS_ENV=test"
 	end
