@@ -4,6 +4,7 @@ namespace :db do
 		sh "rake db:drop"
 		sh "rake db:create"
 		sh "rake db:migrate"
+		sh "rake db:seed"
 	end	
 
 	desc "Totally reset both the dev and test database"
