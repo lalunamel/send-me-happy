@@ -109,7 +109,20 @@ describe UsersController do
     end
 
     it "should not change anything about the user and return status = 200 when only the id is given" do
-      pending
+      user = create :user
+      expected = JSON({
+        status: "success",
+        data: {
+          id: user.id,
+          phone: user.phone,
+          message_frequency: user.message_frequency
+        }  
+      })
+
+      put :update, format: :json, id: user.id
+
+      expect(response).to be_success
+      expect(response.body).to eq expected
     end
   end
 
