@@ -2,6 +2,7 @@ require "spec_helper"
 
 describe TwoFactorAuthService do
 	before :each do
+		stub_time
 		@user = create :user
 		@service = TwoFactorAuthService.new @user
 	end
@@ -14,7 +15,6 @@ describe TwoFactorAuthService do
 		end
 		
 		it "should set the user's verification_token_created_at to now" do
-			stub_time
 			@service.send :set_verification_code
 
 			expect(@user.verification_token_created_at.to_time).to eq Time.now
@@ -60,6 +60,36 @@ describe TwoFactorAuthService do
 
 			expect(num.class).to eq String
 			expect(num.length).to eq 6
+		end
+	end
+
+	describe "#valid_token?" do
+		before :each do
+			@token = (SecureRandom.random_number*(6**10)).to_i.to_s[0...6]
+			User.any_instance.stub(:verification_code) { {verification_token: @token, verification_token_created_at: Time.now} }
+		end
+		it "should return true if tokens match and have been created less than five minutes ago" do
+			expect(@service.valid_token?(@token)).to be_true
+		end
+
+		it "should return false if a validation token has not been set on a user" do
+			User.any_instance.stub(:verification_code) { {verification_token: nil, verification_token_created_at: nil} }
+
+			expect(@service.valid_token?(@token)).to be_false
+		end
+
+		context "tokens don't match" do
+			it "should return false if created > five mins" do
+				User.any_instance.stub(:verification_code) { {verification_token: @token, verification_token_created_at: 1.day.ago} }
+
+				expect(@service.valid_token?("654321")).to be_false
+			end
+
+			it "should return false if created < five mins" do
+				User.any_instance.stub(:verification_code) { {verification_token: @token, verification_token_created_at: Time.now} }
+
+				expect(@service.valid_token?("654321")).to be_false
+			end
 		end
 	end
 end
