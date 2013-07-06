@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe User do
-  describe "attributes" do
+  describe "attribute" do
 
     describe "phone" do
       it "should not validate with an invalid phone number" do
@@ -66,11 +66,32 @@ describe User do
     end
 
     describe "verification code" do
-      it "should not be blank" do
-        pending
-        user = user 
+      describe "database column 'verification_token'" do
+        it "should be a six digit number" do
+          user = create :user
+
+          user.verification_token = "123456"
+          expect_save_and_validate(user)
+
+          user.verification_token = "123"
+          expect_validation_error_on(user, :verification_token, "must be a 6 digit number")
+
+          user.verification_token = "123456789"
+          expect_validation_error_on(user, :verification_token, "must be a 6 digit number")
+        end
+      end      
+
+      describe "#verification_code" do
+        it "should be a hash with attributes 'code' and 'created_at'" do
+          user = create :user, verification_token: "123456", verification_token_created_at: Time.now
+          expected_hash = { 
+                            verification_token: user.verification_token, 
+                            verification_token_created_at: user.verification_token_created_at 
+          }
+          expect(user.verification_code).to eq expected_hash
+        end
+        
       end
-      
     end
 
   	it "should be valid with a valid phone number and message frequency" do

@@ -17,9 +17,8 @@ class MessageSenderService
 				false
 			end
 		end
-
-		# sends a message to the given phone, with the given text
-		# and returns the result
+		
+private
 		def send_sms(phone, text)
 			TWILIO.account.sms.messages.create(
 				from: TWILIO_FROM,

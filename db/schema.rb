@@ -22,14 +22,17 @@ ActiveRecord::Schema.define(version: 20130704155103) do
   end
 
   create_table "templates", force: true do |t|
-    t.text     "text"
+    t.string   "text"
+    t.string   "classification"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|
-    t.string   "phone",             default: ""
-    t.integer  "message_frequency", default: 1
+    t.string   "phone",                         default: ""
+    t.integer  "message_frequency",             default: 1
+    t.string   "verification_token"
+    t.datetime "verification_token_created_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

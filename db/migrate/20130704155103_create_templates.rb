@@ -1,7 +1,8 @@
 class CreateTemplates < ActiveRecord::Migration
   def change
     create_table :templates do |t|
-      t.text :text
+      t.string :text
+      t.string :classification
 
       t.timestamps
     end
