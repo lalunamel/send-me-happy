@@ -6,12 +6,12 @@ describe User do
     describe "phone" do
       it "should not validate with an invalid phone number" do
         user = build :user, :phone => "blah!"
-        expect(user.valid?).to be_false
+        expect_validation_error_on(user, :phone, "can't be blank")
       end
 
       it "should not validate with without a phone number" do
         user = build :user, :phone => nil
-        expect(user.valid?).to be_false
+        expect_validation_error_on(user, :phone, "can't be blank")
       end
 
       it "should normailze a valid phone number and persist it" do
@@ -51,12 +51,12 @@ describe User do
     describe "message frequency" do
       it "should not validate with a message_frequency" do 
         user = build :user, :message_frequency => nil
-        expect(user.valid?).to be_false
+        expect_validation_error_on(user, :message_frequency, "is not a number")
       end
 
       it "should not validate with a message frequency less than 1" do
         user = build :user, :message_frequency => 0
-        expect(user.valid?).to be_false
+        expect_validation_error_on(user, :message_frequency, "must be greater than or equal to 1")
       end
 
       it "should have a default message frequency of 1" do
@@ -65,9 +65,17 @@ describe User do
       end
     end
 
+    describe "verification code" do
+      it "should not be blank" do
+        pending
+        user = user 
+      end
+      
+    end
+
   	it "should be valid with a valid phone number and message frequency" do
   		user = build :user
-  		expect(user.valid?).to be_true
+  		expect_save_and_validate(user)
   	end
 
   	it "should not validate without a phone number and message frequency" do

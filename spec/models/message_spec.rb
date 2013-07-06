@@ -6,8 +6,7 @@ describe Message do
   	template = create :template
   	message = Message.new(user: user, template: template)
 
-		expect(message.save).to be_true
-  	expect(Message.first).to eq message
+    expect_save_and_validate(message)
   end
 
   it "should require a user" do
@@ -20,9 +19,7 @@ describe Message do
   	user = create :user
   	message = Message.new(user: user, template: nil)
 
-  	expect(message.save).to be_false
-    expect(message.errors.count).to eq 1
-    expect(message.errors[:template][0]).to eq "can't be blank"
+    expect_validation_error_on(message, :template, "can't be blank")
   end
 
   it "should have a text that is derived from it's message template" do 

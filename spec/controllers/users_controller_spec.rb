@@ -109,7 +109,7 @@ describe UsersController do
     end
 
     it "should not change anything about the user and return status = 200 when only the id is given" do
-      
+      pending
     end
   end
 

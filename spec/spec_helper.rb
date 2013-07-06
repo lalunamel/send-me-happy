@@ -18,6 +18,8 @@ RSpec.configure do |config|
   # When creating objects using factory girl, the FactoryGirl. part can be left out
   # Can call create, build, etc by themselves
   config.include FactoryGirl::Syntax::Methods
+  
+  config.include GeneralHelper
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
