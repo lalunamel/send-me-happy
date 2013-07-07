@@ -34,6 +34,18 @@ describe UsersController do
       expect(response.status).to eq(400)
       expect(response.body).to eq generate_jsend_json("fail", { id: "can't be blank" })
     end
+
+    it "should return a 404 status and the proper json when a user can't be found" do
+      expected_response = JSON({
+        status: "error",
+        message: "Couldn't find User with id=-1"
+      })
+
+      get :show, :format => :json, :id => -1
+
+      expect(response.status).to eq 404
+      expect(response.body).to eq expected_response
+    end
   end
 
   describe "POST 'create'" do
