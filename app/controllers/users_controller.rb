@@ -11,6 +11,7 @@ class UsersController < ApplicationController
 
   # POST users/1
   def create
+    params.require(:phone)
   	user = User.create!(params.permit(:phone, :message_frequency))
   	respond_to do |format|
   		format.json { render_jsend(success: SerializerUtil::serialize_to_hash(user)) }

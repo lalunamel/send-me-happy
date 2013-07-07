@@ -32,7 +32,7 @@ describe UsersController do
       get :show, :format => :json
 
       expect(response.status).to eq(400)
-      expect(response.body).to eq generate_jsend_json("fail", { id: "An id is required" })
+      expect(response.body).to eq generate_jsend_json("fail", { id: "can't be blank" })
     end
   end
 
@@ -75,7 +75,6 @@ describe UsersController do
       expect(User.all.count).to eq 0
       expect(response.body).to eq expected
     end
-    
   end
 
   describe "PUT 'update'" do
@@ -97,7 +96,7 @@ describe UsersController do
       expected = JSON({
         status: "fail",
         data: {
-          id: "An id is required"
+          id: "can't be blank"
         }
       })
 
@@ -190,7 +189,7 @@ describe UsersController do
       expected_response = JSON({
         status: "fail",
         data: {
-          phone: "A phone is required"
+          phone: "can't be blank"
         }
       })
 

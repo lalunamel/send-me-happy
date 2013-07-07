@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
 
   def rescue_parameter_missing(e)
   	# { "id" : "An id is required" }
-  	error_hash = { e.param.to_s => "#{e.param.to_s} is required".indefinitize.capitalize }
+  	error_hash = { e.param.to_s => "can't be blank" }
   	respond_to do |format|
   		format.json { render_jsend({fail: error_hash, render: {status: 400}}) }
   	end
