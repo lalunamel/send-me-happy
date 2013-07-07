@@ -50,4 +50,25 @@ class UsersController < ApplicationController
       end
     end
   end
+
+  # POST users/1/validate_token
+  def validate_token
+    params.require(:id)
+    params.require(:verification_token)
+    
+    user = User.find(params[:id])
+
+    two_factor_service = TwoFactorAuthService.new(user)
+    token_is_valid = two_factor_service.valid_token?(params[:verification_token])
+
+    if token_is_valid
+      respond_to do |format|
+        format.json { render_jsend(success: token_is_valid) }
+      end
+    else
+      respond_to do |format|
+        format.json { render_jsend(error: "Token does not match") }
+      end
+    end
+  end
 end

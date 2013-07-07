@@ -197,7 +197,74 @@ describe UsersController do
 
       expect(response.body).to eq expected_response
     end
+  end
+
+  describe "POST validate_token" do
+    before :each do
+      stub_time
+      @token = "123456"
+      @user = create :user, verification_token: @token, verification_token_created_at: Time.now
+      @two_factor_serv = double("TwoFactorAuthService")
+
+      User.stub(:find) { @user }
+      TwoFactorAuthService.stub(:new) { @two_factor_serv }
+      @two_factor_serv.stub(:valid_token?) { true }
+    end
+    it "should accept an id and input code and check if the input code matches the real code" do
+      User.should_receive(:find).with(@user.to_param)
+      TwoFactorAuthService.should_receive(:new).with(@user)
+      @two_factor_serv.should_receive(:valid_token?).with(@token)
+
+      post :validate_token, format: :json, id: @user.id, verification_token: @token
+    end
+
+    it "should render the proper json response on success" do
+      expected_response = JSON({
+        status: "success",
+        data: true
+      })
+      
+      post :validate_token, format: :json, id: @user.id, verification_token: @token
     
+      expect(response.body).to eq expected_response
+    end
+    
+    it "should render the proper json response on invalid token" do
+      @two_factor_serv.stub(:valid_token?) { false }
+      expected_response = JSON({
+        status: "error",
+        message: "Token does not match"
+      })
+      
+      post :validate_token, format: :json, id: @user.id, verification_token: @token
+    
+      expect(response.body).to eq expected_response
+    end
+
+    it "should require an id" do
+      expected_response = JSON({
+        status: "fail",
+        data: {
+          id: "can't be blank"
+        }
+      })
+      
+      post :validate_token, format: :json, verification_token: @token
+      expect(response.body).to eq expected_response
+    end
+
+    it "should require a verification_code" do
+      expected_response = JSON({
+        status: "fail",
+        data: {
+          verification_token: "can't be blank"
+        }
+      })
+      
+      post :validate_token, format: :json, id: @user.id
+
+      expect(response.body).to eq expected_response
+    end
   end
 
 end
