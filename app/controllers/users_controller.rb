@@ -26,4 +26,27 @@ class UsersController < ApplicationController
       end
     end
   end
+
+  # POST users/register_and_send_code?phone=
+  def register_and_send_code
+    user = User.new(phone: params.require(:phone))
+    if user.save
+      two_factor_service = TwoFactorAuthService.new(user)
+      message_sent = two_factor_service.send_verification_code
+
+      if message_sent
+        respond_to do |format|
+          format.json { render_jsend(success: true) }
+        end
+      else
+        respond_to do |format|
+          format.json { render_jsend(error: "The message failed to send") }
+        end
+      end
+    else
+      respond_to do |format|
+        format.json { render_jsend(fail: user.errors) }
+      end
+    end
+  end
 end

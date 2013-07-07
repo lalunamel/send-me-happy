@@ -126,4 +126,79 @@ describe UsersController do
     end
   end
 
+  describe "POST register_and_send_code" do
+    before :each do
+      @phone = PhonyRails.normalize_number(Forgery::Address.phone)[0...10]
+      @user = create :user, phone: @phone
+      @two_factor_serv = double("TwoFactorAuthService")
+
+      User.stub(:new) { @user }
+      TwoFactorAuthService.stub(:new) { @two_factor_serv }
+    end
+
+    it "should create a user with the given phone and send the user a verification code" do
+      @two_factor_serv.stub(:send_verification_code) { true }
+
+      User.should_receive(:new).with(phone: @phone)
+      TwoFactorAuthService.should_receive(:new).with(@user)
+      @two_factor_serv.should_receive(:send_verification_code)
+
+      post :register_and_send_code, format: :json, phone: @phone
+    end
+
+    it "should respond with the proper json on success" do
+      @two_factor_serv.stub(:send_verification_code) { true }
+      expected_response = JSON({
+        status: "success",
+        data: true
+      })
+
+      post :register_and_send_code, format: :json, phone: @phone
+
+      expect(response).to be_success
+      expect(response.body).to eq expected_response
+    end
+
+    it "should respond with the proper json on user creation failure" do
+      @user.stub(:save) { false }
+      @user.errors.add(:phone, "is an invalid number")
+      expected_response = JSON({
+        status: "fail",
+        data: {
+          phone: ["is an invalid number"]
+        }
+      })
+
+      post :register_and_send_code, format: :json, phone: @phone
+
+      expect(response.body).to eq expected_response
+    end
+
+    it "should respond with the proper json on message send failure" do
+      @two_factor_serv.stub(:send_verification_code) { false }
+      expected_response = JSON({
+        status: "error",
+        message: "The message failed to send"
+      })
+
+      post :register_and_send_code, format: :json, phone: @phone
+
+      expect(response.body).to eq expected_response
+    end
+    
+    it "should require a phone parameter" do
+      expected_response = JSON({
+        status: "fail",
+        data: {
+          phone: "A phone is required"
+        }
+      })
+
+      post :register_and_send_code, format: :json
+
+      expect(response.body).to eq expected_response
+    end
+    
+  end
+
 end
