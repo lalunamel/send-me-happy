@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
 													:uniqueness => true
 	validates :message_frequency, :numericality => { :greater_than_or_equal_to => 1 }
 	validate :verification_token_validation
+	validates :active, :inclusion => {:in => [true, false], :message => "can't be blank"}
 
 	def verification_code
 		{

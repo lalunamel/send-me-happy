@@ -94,6 +94,21 @@ describe User do
       end
     end
 
+    describe "active flag" do
+      it "should default to false" do
+        user = User.new phone: "8484324321"
+
+        expect(user.active).to be_false
+      end
+
+      it "should not be nil and validate" do
+        user = build :user, active: nil
+
+        expect_validation_error_on(user, :active, "can't be blank")
+      end
+      
+    end
+
   	it "should be valid with a valid phone number and message frequency" do
   		user = build :user
   		expect_save_and_validate(user)

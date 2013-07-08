@@ -5,6 +5,7 @@ class CreateUsers < ActiveRecord::Migration
       t.integer :message_frequency, :default => 1
       t.string :verification_token
       t.datetime :verification_token_created_at
+      t.boolean :active, :default => false
 
       t.timestamps
     end

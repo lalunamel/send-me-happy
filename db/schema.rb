@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20130704155103) do
     t.integer  "message_frequency",             default: 1
     t.string   "verification_token"
     t.datetime "verification_token_created_at"
+    t.boolean  "active",                        default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
