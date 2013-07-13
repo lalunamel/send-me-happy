@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>SendMeHappy2</title>
-  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
-  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+	<title>Send Me Happy - kind words on a schedule</title>
+  <%= stylesheet_link_tag    "application", media: "all" %>
+  <%= javascript_include_tag "application"%>
   <%= csrf_meta_tags %>
 </head>
 <body>
+	<header>
+		<%= image_tag "smh_icon.png", alt: "Send Me Happy" %>
+		<div class="copy">
+			<h3>Send Me Happy</h3>
+		</div>
+	</header>
+	<div class="main">
 
-<%= yield %>
-
+		<%= yield %>
+		
+	</div>
 </body>
 </html>
