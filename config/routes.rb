@@ -1,5 +1,4 @@
 SendMeHappy2::Application.routes.draw do
-  get "static/show"
   get "users/(:id)" => 'users#show'
   post "users" => 'users#create'
   put "users/(:id)" => 'users#update'
