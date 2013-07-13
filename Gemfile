@@ -24,6 +24,7 @@ end
 
 group :development, :test do
   gem 'rspec-rails', '~> 2.0'
+  gem 'jasmine' # js testing
   gem 'byebug'
   gem 'factory_girl_rails', :require => false
 	gem 'forgery' # random data generation
