@@ -29,7 +29,6 @@ $sign-up-width: 320px;
 	&:active {
 		box-shadow: inset 0px 1px 4px -2px rgb(87, 87, 87);
 	}
-	// @include background-image(linear-gradient(#B3E84A, #98EA00));
 }
 
 .main {
@@ -67,6 +66,7 @@ $sign-up-width: 320px;
 
 	.label {
 		margin-bottom: 5px;
+		margin: 0 0 5px 0;
 	}
 
 	$border-input: rgb(196, 196, 196);

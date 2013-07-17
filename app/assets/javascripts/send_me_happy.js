@@ -1,0 +1,1 @@
+this.Smh = this.Smh || {}; 
