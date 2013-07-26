@@ -13,11 +13,7 @@ class ApplicationController < ActionController::Base
   end
 
   def rescue_parameter_missing(e)
-    if(e.param == :phone)
-      error_hash = { :phone => "Please enter a valid number" }
-    else
-     	error_hash = { e.param.to_s => "can't be blank" }
-   end
+  	error_hash = { e.param.to_s => "can't be blank" }
   	respond_to do |format|
   		format.json { render_jsend({fail: error_hash, render: {status: 400}}) }
   	end

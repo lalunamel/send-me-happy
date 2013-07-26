@@ -1,32 +1,22 @@
 require 'spec_helper'
-require 'serializer_util'
 
 describe UsersController do
   def expected_user(user) 
-    SerializerUtil::serialize_to_hash user
+    {
+      id: user.id,
+      phone: user.phone,
+      message_frequency: user.message_frequency
+    }
   end
 
-  def expected_success_json(user, message) 
-    generate_jsend_json("success", expected_user(user), message)
-  end
-
-  def expected_fail_json(user, message) 
-    generate_jsend_json("fail", user.errors, message)
-  end
-
-  def expected_error_json(message) 
-    generate_jsend_json("error", nil, message)
+  def expected_json(user) 
+    generate_jsend_json("success", expected_user(user))
   end
 
   describe "GET 'show'" do
     it "should return http success" do
       user = create :user
       get :show, :format => :json, :id => user.id
-      expected_response = JSON({
-        status: "success",
-        data: SerializerUtil::serialize_to_hash(user),
-        message: "Couldn't find User with id=-1"
-      })
 
       expect(response).to be_success
     end
@@ -35,21 +25,26 @@ describe UsersController do
       user = create :user
       get :show, :format => :json, :id => user.id
 
-      expect(response.body).to eq expected_success_json(user, "")
+      expect(response.body).to eq expected_json(user)
     end
 
     it "should return a 400 status and a proper json object" do
       get :show, :format => :json
 
       expect(response.status).to eq(400)
-      expect(response.body).to eq expected_fail_json({id: "Id can't be blank"}, "Failed while getting a user")
+      expect(response.body).to eq generate_jsend_json("fail", { id: "can't be blank" })
     end
 
     it "should return a 404 status and the proper json when a user can't be found" do
+      expected_response = JSON({
+        status: "error",
+        message: "Couldn't find User with id=-1"
+      })
+
       get :show, :format => :json, :id => -1
 
       expect(response.status).to eq 404
-      expect(response.body).to eq expected_error_json("Couldn't find User with id=-1")
+      expect(response.body).to eq expected_response
     end
   end
 
@@ -58,55 +53,39 @@ describe UsersController do
       user = build :user
 
       post :create, :format => :json, phone: user.phone, message_frequency: user.message_frequency
-      user = User.first
       
       expect(response).to be_success
-      expect(response.body).to eq expected_success_json(user, "User created")
+
+      user = User.first
+
+      expect(expected_json(user)).to eq response.body
     end
 
     it "should create a valid user when given a phone number but not a message_frequency" do
       user = build :user
 
       post :create, :format => :json, phone: user.phone
-      user = User.first
 
       expect(response).to be_success
-      expect(response.body).to eq expected_success_json(user, "User created")
+
+      user = User.first
+      
+      expect(expected_json(user)).to eq response.body
     end
 
     it "should not create a user when a phone is not given" do
-      user = build :user, phone: nil
-      stub(User.create!) { user }
-      expect(User).to have_received(:create!).with({phone: nil, message_frequency: nil})
       expected = JSON({
         status: "fail",
         data: {
-          phone: "not valid"
-        },
-        message: "Please enter a valid number"
+          phone: "can't be blank"
+        }
       })
 
       post :create, format: :json
 
       expect(response.status).to eq 400
       expect(User.all.count).to eq 0
-      # TODO Mock out user, then use it in expectations
-      expect(response.body).to eq expected_fail_json()
-    end
-
-    it "should respond with the proper json on non unique phone number" do
-      user = create :user
-      expected_response = JSON({
-        status: "fail",
-        data: {
-          phone: "already taken"
-        },
-        message: "That phone number has already been taken"
-      })
-
-      post :create, format: :json, phone: user.phone
-      # TODO Mock out user, then use it in expectations
-      expect(response.body).to eq expected_response
+      expect(response.body).to eq expected
     end
   end
 
@@ -117,10 +96,11 @@ describe UsersController do
       user.message_frequency = 3
 
       put :update, format: :json, id: user.id, phone: user.phone, message_frequency: user.message_frequency 
+
       user = User.first
       
       expect(response).to be_success
-      expect(response.body).to eq expected_success_json(user, "User updated")
+      expect(expected_json(user)).to eq response.body
     end
 
     it "should not update the user if an id is not given" do
@@ -129,25 +109,31 @@ describe UsersController do
         status: "fail",
         data: {
           id: "can't be blank"
-        },
-        message: "Please enter a valid id"
+        }
       })
 
       put :update, format: :json, phone: "123", message_frequency: 99
 
       expect(response.status).to eq 400
       expect(User.first).to eq user
-      # TODO Mock out user, then use it in expectations
-      expect(response.body).to eq expected_fail_json()
+      expect(response.body).to eq expected
     end
 
     it "should not change anything about the user and return status = 200 when only the id is given" do
       user = create :user
+      expected = JSON({
+        status: "success",
+        data: {
+          id: user.id,
+          phone: user.phone,
+          message_frequency: user.message_frequency
+        }  
+      })
 
       put :update, format: :json, id: user.id
 
       expect(response).to be_success
-      expect(response.body).to eq expected_success_json(User.first, "User updated")
+      expect(response.body).to eq expected
     end
   end
 
@@ -173,31 +159,55 @@ describe UsersController do
 
     it "should respond with the proper json on success" do
       @two_factor_serv.stub(:send_verification_code) { true }
+      expected_response = JSON({
+        status: "success",
+        data: true
+      })
 
       post :register_and_send_code, format: :json, phone: @phone
 
       expect(response).to be_success
-      expect(response.body).to eq expected_success_json(@user, "Message sent")
+      expect(response.body).to eq expected_response
     end
 
     it "should respond with the proper json on user creation failure" do
       @user.stub(:save) { false }
-      @user.errors.add(:phone, "Please enter a valid number")
+      @user.errors.add(:phone, "is an invalid number")
+      expected_response = JSON({
+        status: "fail",
+        data: {
+          phone: ["is an invalid number"]
+        }
+      })
 
       post :register_and_send_code, format: :json, phone: @phone
-      expect(response.body).to eq expected_fail_json(@user, "Please enter a valid phone")
+
+      expect(response.body).to eq expected_response
     end
 
     it "should respond with the proper json on message send failure" do
       @two_factor_serv.stub(:send_verification_code) { false }
+      expected_response = JSON({
+        status: "error",
+        message: "The message failed to send"
+      })
 
       post :register_and_send_code, format: :json, phone: @phone
-      expect(response.body).to eq expected_error_json("Your message failed to send. Please try again later")
+
+      expect(response.body).to eq expected_response
     end
     
     it "should require a phone parameter" do
+      expected_response = JSON({
+        status: "fail",
+        data: {
+          phone: "can't be blank"
+        }
+      })
+
       post :register_and_send_code, format: :json
-      @user.errors.add(:phone, "Please enter a valid number")
+
+      expect(response.body).to eq expected_response
     end
   end
 
@@ -212,7 +222,6 @@ describe UsersController do
       TwoFactorAuthService.stub(:new) { @two_factor_serv }
       @two_factor_serv.stub(:valid_token?) { true }
     end
-
     it "should accept an id and input code and check if the input code matches the real code" do
       User.should_receive(:find).with(@user.to_param)
       TwoFactorAuthService.should_receive(:new).with(@user)
@@ -224,8 +233,7 @@ describe UsersController do
     it "should render the proper json response on success" do
       expected_response = JSON({
         status: "success",
-        data: true,
-        message: "Token successfully verified"
+        data: true
       })
       
       post :validate_token, format: :json, id: @user.id, verification_token: @token
@@ -237,7 +245,7 @@ describe UsersController do
       @two_factor_serv.stub(:valid_token?) { false }
       expected_response = JSON({
         status: "error",
-        message: "Invalid token, please try again"
+        message: "Token does not match"
       })
       
       post :validate_token, format: :json, id: @user.id, verification_token: @token
@@ -250,8 +258,7 @@ describe UsersController do
         status: "fail",
         data: {
           id: "can't be blank"
-        },
-        message: "Please enter an id"
+        }
       })
       
       post :validate_token, format: :json, verification_token: @token
@@ -263,8 +270,7 @@ describe UsersController do
         status: "fail",
         data: {
           verification_token: "can't be blank"
-        },
-        message: "Please enter a verification code"
+        }
       })
       
       post :validate_token, format: :json, id: @user.id

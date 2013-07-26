@@ -20,16 +20,4 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  activerecord:
-    attributes:
-      user:
-        phone: "Phone number"
-    errors:
-      models:
-        user:
-          attributes:
-            phone:
-              blank: "Please enter a valid number"
-              improbable_phone: "Please enter a valid number"
-              invalid: "Please enter a valid number"
-              taken: "That phone number has already been registered"
+  hello: "Hello world"
