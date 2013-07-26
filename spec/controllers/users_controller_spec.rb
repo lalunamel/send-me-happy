@@ -1,16 +1,13 @@
 require 'spec_helper'
-
+require "serializer_util"
+  
 describe UsersController do
-  def expected_user(user) 
-    {
-      id: user.id,
-      phone: user.phone,
-      message_frequency: user.message_frequency
-    }
+  def expected_json(user) 
+    generate_jsend_json("success", SerializerUtil::serialize_to_hash(user))
   end
 
-  def expected_json(user) 
-    generate_jsend_json("success", expected_user(user))
+  def normalize_phone(phone)
+    "1" + phone.phony_formatted(normalize: :US, spaces: "")
   end
 
   describe "GET 'show'" do
@@ -49,28 +46,28 @@ describe UsersController do
   end
 
   describe "POST 'create'" do
-    it "should create a user and return the serialized json of that user" do
-      user = build :user
+    before :each do
+      @built_user = build :user
+      @created_user = create :user
+      @two_factor_serv = double("TwoFactorAuthService")
+      TwoFactorAuthService.stub(:new) { @two_factor_serv }
+      @two_factor_serv.stub(:send_verification_code) { true }
+    end
 
-      post :create, :format => :json, phone: user.phone, message_frequency: user.message_frequency
+    it "should create a user and return the serialized json of that user" do
+      post :create, :format => :json, phone: @built_user.phone, message_frequency: @built_user.message_frequency
       
       expect(response).to be_success
-
-      user = User.first
-
-      expect(expected_json(user)).to eq response.body
+      expect(response.body).to eq expected_json(User.last)
+      expect(User.last.phone).to eq normalize_phone(@built_user.phone)
     end
 
     it "should create a valid user when given a phone number but not a message_frequency" do
-      user = build :user
-
-      post :create, :format => :json, phone: user.phone
+      post :create, :format => :json, phone: @built_user.phone
 
       expect(response).to be_success
-
-      user = User.first
-      
-      expect(expected_json(user)).to eq response.body
+      expect(response.body).to eq expected_json(User.last)
+      expect(User.last.phone).to eq normalize_phone(@built_user.phone)
     end
 
     it "should not create a user when a phone is not given" do
@@ -80,12 +77,35 @@ describe UsersController do
           phone: "can't be blank"
         }
       })
+      originalUserCount = User.count
 
       post :create, format: :json
 
       expect(response.status).to eq 400
-      expect(User.all.count).to eq 0
+      expect(User.all.count).to eq originalUserCount
       expect(response.body).to eq expected
+    end
+
+    describe "verification code" do
+      before :each do
+        User.stub(:create!).and_return(@created_user)
+      end
+
+      it "should send" do
+        @two_factor_serv.stub(:send_verification_code) { true }
+        TwoFactorAuthService.should_receive(:new).with(@created_user)
+        @two_factor_serv.should_receive(:send_verification_code)
+
+        post :create, :format => :json, phone: @built_user.phone, message_frequency: @built_user.message_frequency
+      end
+
+      it "should respond with an error response if not sent" do
+        @two_factor_serv.stub(:send_verification_code) { false }
+
+        post :create, :format => :json, phone: @built_user.phone, message_frequency: @built_user.message_frequency
+
+        expect(response.body).to eq (JSON({ status: "error", message: "Your message failed to send. Please try again" }))
+      end
     end
   end
 
@@ -134,80 +154,6 @@ describe UsersController do
 
       expect(response).to be_success
       expect(response.body).to eq expected
-    end
-  end
-
-  describe "POST register_and_send_code" do
-    before :each do
-      @phone = PhonyRails.normalize_number(Forgery::Address.phone)[0...10]
-      @user = create :user, phone: @phone
-      @two_factor_serv = double("TwoFactorAuthService")
-
-      User.stub(:new) { @user }
-      TwoFactorAuthService.stub(:new) { @two_factor_serv }
-    end
-
-    it "should create a user with the given phone and send the user a verification code" do
-      @two_factor_serv.stub(:send_verification_code) { true }
-
-      User.should_receive(:new).with(phone: @phone)
-      TwoFactorAuthService.should_receive(:new).with(@user)
-      @two_factor_serv.should_receive(:send_verification_code)
-
-      post :register_and_send_code, format: :json, phone: @phone
-    end
-
-    it "should respond with the proper json on success" do
-      @two_factor_serv.stub(:send_verification_code) { true }
-      expected_response = JSON({
-        status: "success",
-        data: true
-      })
-
-      post :register_and_send_code, format: :json, phone: @phone
-
-      expect(response).to be_success
-      expect(response.body).to eq expected_response
-    end
-
-    it "should respond with the proper json on user creation failure" do
-      @user.stub(:save) { false }
-      @user.errors.add(:phone, "is an invalid number")
-      expected_response = JSON({
-        status: "fail",
-        data: {
-          phone: ["is an invalid number"]
-        }
-      })
-
-      post :register_and_send_code, format: :json, phone: @phone
-
-      expect(response.body).to eq expected_response
-    end
-
-    it "should respond with the proper json on message send failure" do
-      @two_factor_serv.stub(:send_verification_code) { false }
-      expected_response = JSON({
-        status: "error",
-        message: "The message failed to send"
-      })
-
-      post :register_and_send_code, format: :json, phone: @phone
-
-      expect(response.body).to eq expected_response
-    end
-    
-    it "should require a phone parameter" do
-      expected_response = JSON({
-        status: "fail",
-        data: {
-          phone: "can't be blank"
-        }
-      })
-
-      post :register_and_send_code, format: :json
-
-      expect(response.body).to eq expected_response
     end
   end
 
