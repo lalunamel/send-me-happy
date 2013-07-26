@@ -13,7 +13,9 @@
 src_files:
   - spec/javascripts/helpers/jquery-2.0.3.js
   - spec/javascripts/helpers/jasmine-jquery.js
+  - spec/javascripts/helpers/mock-ajax.js
   - app/assets/javascripts/application.js
+  - spec/javascripts/fixtures/ajax_mocks.js
   - app/assets/javascripts/**/*.js
 
 # stylesheets
