@@ -1,5 +1,8 @@
 module JsendHelper
-	def generate_jsend_json(status, data)
-		JSON({ status: status, data: data })
+	def generate_jsend_json(status, data, message = nil)
+		hash[:data] = data if data
+		hash[:status] = status if status
+		hash[:message] = message if message
+		JSON hash
 	end
 end

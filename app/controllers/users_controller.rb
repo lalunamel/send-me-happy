@@ -37,16 +37,16 @@ class UsersController < ApplicationController
 
       if message_sent
         respond_to do |format|
-          format.json { render_jsend(success: true) }
+          format.json { render_jsend(success: "Your message has been sent") }
         end
       else
         respond_to do |format|
-          format.json { render_jsend(error: "The message failed to send") }
+          format.json { render_jsend(error: "Your message failed to send. Please try again later") }
         end
       end
     else
       respond_to do |format|
-        format.json { render_jsend(fail: user.errors) }
+        format.json { render_jsend(fail: user.errors.to_hash.update(user.errors.to_hash) {|_,v| v.first } ) }
       end
     end
   end

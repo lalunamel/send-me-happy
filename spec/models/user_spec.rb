@@ -6,12 +6,23 @@ describe User do
     describe "phone" do
       it "should not validate with an invalid phone number" do
         user = build :user, :phone => "blah!"
-        expect_validation_error_on(user, :phone, "can't be blank")
+        expect_validation_error_on(user, :phone, "Please enter a valid number")
       end
 
       it "should not validate with without a phone number" do
         user = build :user, :phone => nil
-        expect_validation_error_on(user, :phone, "can't be blank")
+        expect_validation_error_on(user, :phone, "Please enter a valid number")
+      end
+
+      it "should not validate a phone with one extra digit and letters" do
+        user = create :user, :phone => "aa84a74a2a11a0a8a38"
+        expect_validation_error_on(user, :phone, "Please enter a valid number")
+      end
+
+      it "should validate and normalize given a phone with letters in it" do
+        pending "Need to get a tighter validation scheme for phones"
+        user = create :user, :phone => "aa84a74a2a1a0a8a38"
+        expect(user.phone).to eq "18474210838"
       end
 
       it "should normailze a valid phone number and persist it" do
