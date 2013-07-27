@@ -77,7 +77,7 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render_jsend(error: "Token does not match") }
+        format.json { render_jsend(error: "The verification code you entered is not correct or is too old. Please request a new code") }
       end
     end
   end

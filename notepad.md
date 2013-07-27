@@ -35,7 +35,7 @@
 		* Error (unexpected error/exception on server): returns a message about the problem on the server
 			{
 				status: 'error',
-				message: 'Twillio invalid phone number 12345 can't be a phone number
+				message: 'Twillio invalid phone number 12345 can't be a phone number'
 			}
 
 ## User Interface

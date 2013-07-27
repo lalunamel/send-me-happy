@@ -12,5 +12,4 @@ private
 	def after_initialize()
 		self.text = self.template.text if self.template.present?
 	end
-	
 end
