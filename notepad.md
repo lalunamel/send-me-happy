@@ -38,4 +38,10 @@
 				message: 'Twillio invalid phone number 12345 can't be a phone number'
 			}
 
+	### Verifying a user's code
+		Requires that the server knows which verification code to compare against when verifying an input code.
+		Options:
+			* Store in session -> This seems pretty cool, but need more research
+			* Store in hidden input on page -> Simple, but not very elegant
+
 ## User Interface

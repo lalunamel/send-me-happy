@@ -69,6 +69,11 @@ describe UsersController do
       expect(response.body).to eq expected_jsend("fail", { phone: "can't be blank" })
     end
 
+    it "should set the created user into the session" do
+      post :create, :format => :json, phone: @built_user.phone
+      expect(session[:user_id]).to eq User.last.id
+    end
+
     describe "verification code" do
       before :each do
         User.stub(:create!).and_return(@created_user)
@@ -101,6 +106,7 @@ describe UsersController do
     before :each do
       @user = create :user, phone: "1231231234", message_frequency: 3
     end
+
     it "should update the user and return the user" do
       put :update, format: :json, id: @user.id, phone: @user.phone, message_frequency: @user.message_frequency 
 
@@ -131,6 +137,7 @@ describe UsersController do
       stub_time
       @token = "123456"
       @user = create :user, verification_token: @token, verification_token_created_at: Time.now
+      session[:user_id] = @user.id
       @two_factor_serv = double("TwoFactorAuthService")
 
       User.stub(:find) { @user }
@@ -139,33 +146,28 @@ describe UsersController do
     end
 
     it "should accept an id and input code and check if the input code matches the real code" do
-      User.should_receive(:find).with(@user.to_param)
+      User.should_receive(:find).with(@user.id)
       TwoFactorAuthService.should_receive(:new).with(@user)
       @two_factor_serv.should_receive(:valid_token?).with(@token)
 
-      post :validate_token, format: :json, id: @user.id, verification_token: @token
+      post :validate_token, format: :json, verification_token: @token
     end
 
     it "should render the proper json response on success" do
-      post :validate_token, format: :json, id: @user.id, verification_token: @token
+      post :validate_token, format: :json, verification_token: @token
     
       expect(response.body).to eq expected_jsend("success", true)
     end
     
     it "should render the proper json response on invalid token" do
       @two_factor_serv.stub(:valid_token?) { false }
-      post :validate_token, format: :json, id: @user.id, verification_token: @token
+      post :validate_token, format: :json, verification_token: @token
     
       expect(response.body).to eq expected_jsend("error", nil, "The verification code you entered is not correct or is too old. Please request a new code")
     end
 
-    it "should require an id" do
-      post :validate_token, format: :json, verification_token: @token
-      expect(response.body).to eq expected_jsend("fail", { id: "can't be blank" })
-    end
-
     it "should require a verification_code" do
-      post :validate_token, format: :json, id: @user.id
+      post :validate_token, format: :json
       expect(response.body).to eq expected_jsend("fail", { verification_token: "can't be blank" })
     end
   end
