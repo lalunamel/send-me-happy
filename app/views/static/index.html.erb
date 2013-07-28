@@ -3,7 +3,7 @@
 <h4 class="sign-up-copy">Use your phone number to sign up for Send Me Happy and receive motivational text messages every day, week, or month.</h6>
 <div class="sign-up-flow-container">
 	<div class="phone">
-	<%= form_tag({controller: "users", action: "register_and_send_code"}, method: "post") do %>
+	<%= form_tag({controller: "users", action: "create"}, method: "post") do %>
 	  <h3 class="label">Enter your phone to begin</h3>
 	  <input name="phone" type="text" placeholder="(234) 234 - 4567">
 	  <a href="#" class="button">Send Verification Code</a>

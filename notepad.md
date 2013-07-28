@@ -45,3 +45,14 @@
 			* Store in hidden input on page -> Simple, but not very elegant
 
 ## User Interface
+	### How should the user be notified that an action has been completed (message sent, verification code accepted, user updated properly)
+		* On success, hide current successful input, and show next. 
+		  (User enters phone successfully, phone input dissapears and verification code input appears in it's place)
+		  In this case, only one input is visible at a time
+		* Show success messages
+		* Input would be highlighted green
+		
+
+
+To get jasmine to equate jquery objects:
+  if(arguments[0] instanceof jQuery && arguments[0] instanceof jQuery && arguments[0].is(arguments[1])) return true;

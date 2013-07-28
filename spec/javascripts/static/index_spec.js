@@ -20,11 +20,16 @@ describe("#submitForm", function() {
 	var $button, event, $form, spyEvent, $ajax;
 
 	beforeEach(function(){
+		$form = $('.sign-up-flow-container .phone form');
+		$input = $form.children('input,select');
 		$button = $('.sign-up-flow-container .phone .button');
+
+		$input.val(123);
 		$button.click(index.submitForm);
+		
 		spyEvent = spyOnEvent($('.sign-up-flow-container .phone .button'), 'click');
 		jasmine.Ajax.useMock();
-		$ajax = jasmine.Ajax.jQueryMock().send(AjaxMocks.register_and_send_code.fail);
+		$ajax = jasmine.Ajax.jQueryMock().send(AjaxMocks.create.fail);
 	});
 
 	it("should make an ajax call", function() {
@@ -32,7 +37,7 @@ describe("#submitForm", function() {
 		$button.click();
 		expect($.ajax).toHaveBeenCalledWith({
 			type: "post",
-			url: "/users/register_and_send_code",
+			url: "/users",
 			data: "phone=123"
 		});
 	}); 
@@ -50,47 +55,55 @@ describe("#submitForm", function() {
 		expect($('.sign-up-flow-container .phone p').length).toBe(1);
 	}); 
 
-	it("should insert 'Message sent' on successful response", function(){
-		spyOn($, 'ajax').andCallFake(function(req){
-			var deferred = $.Deferred();
-			deferred.resolve(AjaxMocks.register_and_send_code.success);
-			return deferred.promise();
-		});
+	it("should remove the error class from the container", function() {
+		$form.parent().addClass('error');
 		$button.click();
-		expect($button.siblings('p')).toHaveText("Your message has been sent");
+		expect($form.parent()).not.toHaveClass('error');
 	});
 
-	it("should insert an error on failed response", function(){
-		spyOn($, 'ajax').andCallFake(function(req){
-			var deferred = $.Deferred();
-			deferred.resolve(AjaxMocks.register_and_send_code.fail);
-			return deferred.promise();
+	describe("on failure or error", function() {
+		beforeEach(function(){
+			spyOn(index, 'insertMessage');
 		});
-		$button.click();
-		expect($button.siblings('p')).toHaveText("Please enter a valid number");
-	});
 
-	it("should insert 'There was a problem sending your message. Please try again later' on error response", function(){
-		spyOn($, 'ajax').andCallFake(function(req){
-			var deferred = $.Deferred();
-			deferred.resolve(AjaxMocks.register_and_send_code.error);
-			return deferred.promise();
+		it("should handle ajax failure", function() {
+			spyOn($, 'ajax').andReturn($.Deferred().reject());
+			$button.click();
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "Something nasty happened and we were unable to complete your request", true);
 		});
-		$button.click();
-		expect($button.siblings('p')).toHaveText("There was a problem sending your message. Please try again later");
-	});
 
-	it("should get a message if responseJSON is defined on the response", function() {
-		spyOn($, 'ajax').andCallFake(function(req){
-			var deferred = $.Deferred();
-			response = {};
-			response.responseJSON = AjaxMocks.register_and_send_code.success;
-			response.responseText = JSON.stringify(AjaxMocks.register_and_send_code.success)
-			deferred.resolve(response);
-			return deferred.promise();
+		it("should insert an error on failed response", function(){
+			spyOn($, 'ajax').andCallFake(function(req){
+				var deferred = $.Deferred();
+				deferred.resolve(AjaxMocks.create.fail);
+				return deferred.promise();
+			});
+			$button.click();
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "That phone has already been taken", true);
 		});
-		$button.click();
-		expect($button.siblings('p')).toHaveText("Your message has been sent");
+
+		it("should insert 'There was a problem sending your message. Please try again later' on error response", function(){
+			spyOn($, 'ajax').andCallFake(function(req){
+				var deferred = $.Deferred();
+				deferred.resolve(AjaxMocks.create.error);
+				return deferred.promise();
+			});
+			$button.click();
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "There was a problem sending your message. Please try again later", true);
+		});
+
+		it("should get a message if responseJSON is defined on the response", function() {
+			spyOn($, 'ajax').andCallFake(function(req){
+				var deferred = $.Deferred();
+				response = {};
+				response.responseJSON = AjaxMocks.create.fail;
+				response.responseText = JSON.stringify(AjaxMocks.create.success)
+				deferred.resolve(response);
+				return deferred.promise();
+			});
+			$button.click();
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "That phone has already been taken", true);
+		});
 	});
 });
 
@@ -123,12 +136,9 @@ describe("#insertMessage", function() {
 	});
 
 	// Move this functionality into a separate function?
-	it("should move the cursor back to the input box", function() {
+	it("should apply the error class to the container if 'error' is true", function() {
+		index.insertMessage($section.find('input'), message, true);
 
-	});
-
-	// Do we really want to do this?
-	it("should delete the last thing in the input box", function() {
-
+		expect($section).toBe("div.error");
 	});
 });

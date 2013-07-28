@@ -7,40 +7,42 @@ Smh.StaticController.index = {
 	submitForm: function(event) {
 		var $form = $(event.target).closest('form');
 		var $input = $form.children('input,select');
-		var that = this;
+		$form.parents('div').first().removeClass('error');
 	    $.ajax({
 	      type: $form.attr('method'),
 	      url: $form.attr('action'),
 	      data: $form.serialize()
 	    })
-	    .always(function(response){ 
+	    .done(function(response){ 
 	    	var message = "";
 	    	if(response.responseJSON !== undefined)
 	    		response = response.responseJSON;
 
-	    	if (response.status == "success") {
-	    		message = response.data;
-	    	}
-	    	else if (response.status == "fail") {
+	    	if (response.status == "fail") {
 	    		for(key in response.data) {
-	    			message += response.data[key];
-	    			message += "\n";
+	    			if(message.length > 0) 
+	    				message += "\n";
+	    			message += "That " + key + " " + response.data[key];
 	    		}
 	    	}
 	    	else if (response.status == "error") {
 	    		message = response.message
 	    	}
-	    	else {
-	    		message = "An error occurred while talking to the server. Please contact support"
-	    	}
-	    	Smh.StaticController.index.insertMessage($input, message)
+
+	    	if(!!message) 
+		    	Smh.StaticController.index.insertMessage($input, message, true)
+	    })
+	    .fail(function() {
+	    	Smh.StaticController.index.insertMessage($input, "Something nasty happened and we were unable to complete your request", true);
 	    });
 
 		event.preventDefault();
 	},
  
-	insertMessage: function(input, message) {
+	insertMessage: function(input, message, error) {
 		messageElement = $('<p>' + message + '</p>').addClass('message');
+		if(error) input.parents('div').first().addClass('error');
+
 		if(input.next().is('p')) {
 			input.siblings('p').replaceWith(messageElement);
 		}

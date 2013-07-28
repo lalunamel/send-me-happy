@@ -10,6 +10,7 @@
 
 $button-background-color: #9eec0f;
 $sign-up-width: 320px;
+$error-color: #FF5D5D;
 
 .button {
 	background-color: $button-background-color;
@@ -50,6 +51,15 @@ $sign-up-width: 320px;
 
 	.phone .label {
 		font-size: 24px;
+	}
+
+	.error {
+		input {
+			border-color: $error-color;
+		}
+		.message {
+			color: $error-color;
+		}
 	}
 
 	.button {
