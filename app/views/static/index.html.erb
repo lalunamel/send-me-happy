@@ -10,7 +10,7 @@
 	<% end -%>
 	</div>
 	<div class="verification">
-		<%= form_tag({controller: "users", action: "validate_token"}, method: "post") do %>
+		<%= form_tag({controller: "users", action: "verify"}, method: "post") do %>
 			<input type="text" name="verification_token" placeholder="Enter verification code">
 			<a href="#" class="button">Verify Code</a>
 		<% end -%>

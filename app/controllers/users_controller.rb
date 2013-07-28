@@ -40,8 +40,8 @@ class UsersController < ApplicationController
     end
   end
 
-  # POST users/1/validate_token
-  def validate_token
+  # POST users/1/verify
+  def verify
     params.require(:verification_token)
     
     user = User.find(get_id)

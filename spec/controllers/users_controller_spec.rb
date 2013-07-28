@@ -132,7 +132,7 @@ describe UsersController do
     end
   end
 
-  describe "POST validate_token" do
+  describe "POST verify" do
     before :each do
       stub_time
       @token = "123456"
@@ -150,24 +150,24 @@ describe UsersController do
       TwoFactorAuthService.should_receive(:new).with(@user)
       @two_factor_serv.should_receive(:valid_token?).with(@token)
 
-      post :validate_token, format: :json, verification_token: @token
+      post :verify, format: :json, verification_token: @token
     end
 
     it "should render the proper json response on success" do
-      post :validate_token, format: :json, verification_token: @token
+      post :verify, format: :json, verification_token: @token
     
       expect(response.body).to eq expected_jsend("success", true)
     end
     
     it "should render the proper json response on invalid token" do
       @two_factor_serv.stub(:valid_token?) { false }
-      post :validate_token, format: :json, verification_token: @token
+      post :verify, format: :json, verification_token: @token
     
       expect(response.body).to eq expected_jsend("error", nil, "The verification code you entered is not correct or is too old. Please request a new code")
     end
 
     it "should require a verification_code" do
-      post :validate_token, format: :json
+      post :verify, format: :json
       expect(response.body).to eq expected_jsend("fail", { verification_token: "can't be blank" })
     end
   end
