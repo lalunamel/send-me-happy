@@ -56,9 +56,15 @@ describe("#submitForm", function() {
 	}); 
 
 	it("should remove the error class from the container", function() {
-		$form.parent().addClass('error');
+		index.insertMessage($input, "", false);
 		$button.click();
 		expect($form.parent()).not.toHaveClass('error');
+	});
+
+	it("should remove message next to the button clicked", function() {
+		index.insertMessage($input, "", false);
+		$button.click();
+		expect($form.parent()).not.toContain('p.message');
 	});
 
 	describe("on failure or error", function() {

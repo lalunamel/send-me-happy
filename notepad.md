@@ -55,4 +55,4 @@
 
 
 To get jasmine to equate jquery objects:
-  if(arguments[0] instanceof jQuery && arguments[0] instanceof jQuery && arguments[0].is(arguments[1])) return true;
+  if(arguments[0] instanceof jQuery && arguments[1] instanceof jQuery && arguments[0].is(arguments[1])) return true;

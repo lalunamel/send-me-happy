@@ -8,6 +8,7 @@ Smh.StaticController.index = {
 		var $form = $(event.target).closest('form');
 		var $input = $form.children('input,select');
 		$form.parents('div').first().removeClass('error');
+		$form.find('p').remove();
 	    $.ajax({
 	      type: $form.attr('method'),
 	      url: $form.attr('action'),
@@ -39,15 +40,15 @@ Smh.StaticController.index = {
 		event.preventDefault();
 	},
  
-	insertMessage: function(input, message, error) {
+	insertMessage: function($input, message, error) {
 		messageElement = $('<p>' + message + '</p>').addClass('message');
-		if(error) input.parents('div').first().addClass('error');
+		if(error) $input.parents('div').first().addClass('error');
 
-		if(input.next().is('p')) {
-			input.siblings('p').replaceWith(messageElement);
+		if($input.next().is('p')) {
+			$input.siblings('p').replaceWith(messageElement);
 		}
 		else {
-			input.after(messageElement);
+			$input.after(messageElement);
 		}
 	}
 };

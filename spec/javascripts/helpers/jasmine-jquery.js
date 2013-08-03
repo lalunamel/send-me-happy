@@ -1,7 +1,7 @@
 /*!
  Jasmine-jQuery: a set of jQuery helpers for Jasmine tests.
 
- Version 1.5.3
+ Version 1.5.6
 
  https://github.com/velesin/jasmine-jquery
 
@@ -477,6 +477,10 @@ jasmine.JQuery.matchersClass = {}
     toContain: function(selector) {
       return this.actual.find(selector).length
     },
+    
+    toBeMatchedBy: function(selector) {
+      return this.actual.filter(selector).length
+    },
 
     toBeDisabled: function(selector){
       return this.actual.is(':disabled')
@@ -513,7 +517,8 @@ jasmine.JQuery.matchersClass = {}
 
     // tests the existence of a specific event binding + handler
     toHandleWith: function(eventName, eventHandler) {
-      var stack = $._data(this.actual.get(0), "events")[eventName]
+      var normalizedEventName = eventName.split('.')[0];
+      var stack = $._data(this.actual.get(0), "events")[normalizedEventName]
       for (var i = 0; i < stack.length; i++) {
         if (stack[i].handler == eventHandler) return true
       }
@@ -649,6 +654,18 @@ beforeEach(function() {
       }
       return jasmine.JQuery.events.wasStopped(selector, eventName)
     }
+  })
+  jasmine.getEnv().addEqualityTester(function(a, b) {
+    if(a instanceof jQuery && b instanceof jQuery) {
+      if(a.size() != b.size()) {
+        return jasmine.undefined;
+      }
+      else if(a.is(b)) {
+        return true;
+      }
+    }
+    return jasmine.undefined;
+    
   })
 })
 
