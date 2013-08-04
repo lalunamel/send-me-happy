@@ -1,6 +1,11 @@
 # Notepad
 
 ## Api
+	### Status codes
+		200 - Success
+		400 - The client did something wrong
+		500 - The server did something wrong
+
 	### User facing messages in api responses
 		Decision: User facing messages are ok
 			**pros**
