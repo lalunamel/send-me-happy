@@ -47,7 +47,7 @@ class UsersController < ApplicationController
     user = User.find(get_id)
 
     two_factor_service = TwoFactorAuthService.new(user)
-    token_is_valid = two_factor_service.valid_token?(params[:verification_token])
+    token_is_valid = two_factor_service.valid_token?(params.require(:verification_token))
 
     if token_is_valid
       respond_to do |format|

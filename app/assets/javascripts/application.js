@@ -12,4 +12,6 @@
 //
 //= require jquery-2.0.3.min.js
 //= require jquery-ui-1.10.3.custom.min.js
+//= require underscore.js
+//= require underscore.string.min.js
 //= require_tree .

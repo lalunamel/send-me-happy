@@ -1,3 +1,5 @@
+_.mixin(_.string.exports());
+
 Smh.StaticController = Smh.StaticController || {};
 Smh.StaticController.index = {
 	init: function() {
@@ -16,8 +18,7 @@ Smh.StaticController.index = {
 	    })
 	    .done(function(response){ 
 	    	var message = "";
-	    	if(response.responseJSON !== undefined)
-	    		response = response.responseJSON;
+	    		response = response.responseJSON || JSON.parse(response.responseText);
 
 	    	if (response.status == "fail") {
 	    		for(key in response.data) {
@@ -33,8 +34,23 @@ Smh.StaticController.index = {
 	    	if(!!message) 
 		    	Smh.StaticController.index.insertMessage($input, message, true)
 	    })
-	    .fail(function() {
-	    	Smh.StaticController.index.insertMessage($input, "Something nasty happened and we were unable to complete your request", true);
+	    .fail(function(response) {
+	    	var message = "";
+	    		response = response.responseJSON || JSON.parse(response.responseText);
+
+    		if(response.status === "fail") {
+    			_.each(response.data, function(value, key) {
+    				message += [_(key).capitalize(), " ", value].join("");
+    			});
+    		}
+    		else if(response.status === "error") {
+    			message = response.message;
+    		}
+    		else {
+    			message = "Something nasty happened and we were unable to complete your request";
+    		}
+
+	    	Smh.StaticController.index.insertMessage($input, message, true);
 	    });
 
 		event.preventDefault();

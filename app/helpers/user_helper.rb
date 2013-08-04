@@ -1,6 +1,6 @@
 module UserHelper
 	def get_id
-		if(params[:id].present? && session[:user_id].blank?)
+		if params[:id].present?
 			params.require(:id)
 		elsif session[:user_id].present?
 			session[:user_id]

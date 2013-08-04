@@ -11,11 +11,13 @@
 #   - dist/**/*.js
 #
 src_files:
-  - spec/javascripts/helpers/jquery-2.0.3.js
+  - vendor/assets/javascripts/jquery-2.0.3.min.js
+  - vendor/assets/javascripts/underscore.js
+  - vendor/assets/javascripts/underscore.string.min.js
   - spec/javascripts/helpers/jasmine-jquery.js
   - spec/javascripts/helpers/mock-ajax.js
   - app/assets/javascripts/application.js
-  - spec/javascripts/fixtures/ajax_mocks.js
+  - spec/javascripts/fixtures/ajax_fixture.js
   - app/assets/javascripts/**/*.js
 
 # stylesheets

@@ -29,7 +29,7 @@ describe("#submitForm", function() {
 		
 		spyEvent = spyOnEvent($('.sign-up-flow-container .phone .button'), 'click');
 		jasmine.Ajax.useMock();
-		$ajax = jasmine.Ajax.jQueryMock().send(AjaxMocks.create.fail);
+		$ajax = jasmine.Ajax.jQueryMock().send(AjaxFixture.create.fail);
 	});
 
 	it("should make an ajax call", function() {
@@ -48,11 +48,11 @@ describe("#submitForm", function() {
 	}); 	
 
 	it("should clear the previous message before making the ajax request", function() {
-		$button.siblings('input').after($('<p>hello world!</p>').addClass('message'));
+		spyOn($, 'ajax').andReturn($.Deferred().resolve(AjaxFixture.create.fail));
 		$button.click();
 		$button.click();
 		$button.click();
-		expect($('.sign-up-flow-container .phone p').length).toBe(1);
+		expect($('.sign-up-flow-container .phone p')).toExist();
 	}); 
 
 	it("should remove the error class from the container", function() {
@@ -73,7 +73,7 @@ describe("#submitForm", function() {
 		});
 
 		it("should handle ajax failure", function() {
-			spyOn($, 'ajax').andReturn($.Deferred().reject());
+			spyOn($, 'ajax').andReturn($.Deferred().reject(AjaxFixture.create.error));
 			$button.click();
 			expect(index.insertMessage).toHaveBeenCalledWith($input, "Something nasty happened and we were unable to complete your request", true);
 		});
@@ -81,34 +81,19 @@ describe("#submitForm", function() {
 		it("should insert an error on failed response", function(){
 			spyOn($, 'ajax').andCallFake(function(req){
 				var deferred = $.Deferred();
-				deferred.resolve(AjaxMocks.create.fail);
-				return deferred.promise();
+				return deferred.reject(AjaxFixture.create.fail);
 			});
 			$button.click();
-			expect(index.insertMessage).toHaveBeenCalledWith($input, "That phone has already been taken", true);
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "Phone has already been taken", true);
 		});
 
-		it("should insert 'There was a problem sending your message. Please try again later' on error response", function(){
+		it("should insert 'Something nasty happened and we were unable to complete your request' on error response", function(){
 			spyOn($, 'ajax').andCallFake(function(req){
 				var deferred = $.Deferred();
-				deferred.resolve(AjaxMocks.create.error);
-				return deferred.promise();
+				return deferred.reject(AjaxFixture.create.error);
 			});
 			$button.click();
-			expect(index.insertMessage).toHaveBeenCalledWith($input, "There was a problem sending your message. Please try again later", true);
-		});
-
-		it("should get a message if responseJSON is defined on the response", function() {
-			spyOn($, 'ajax').andCallFake(function(req){
-				var deferred = $.Deferred();
-				response = {};
-				response.responseJSON = AjaxMocks.create.fail;
-				response.responseText = JSON.stringify(AjaxMocks.create.success)
-				deferred.resolve(response);
-				return deferred.promise();
-			});
-			$button.click();
-			expect(index.insertMessage).toHaveBeenCalledWith($input, "That phone has already been taken", true);
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "Something nasty happened and we were unable to complete your request", true);
 		});
 	});
 });
