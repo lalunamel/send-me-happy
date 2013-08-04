@@ -25,7 +25,7 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render_jsend(error: "Your message failed to send. Please try again") }
+        format.json { render_jsend(error: "Your message failed to send. Please try again", render: { status: 500 })}
       end
     end
   end
@@ -55,7 +55,7 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render_jsend(error: "The verification code you entered is not correct or is too old. Please request a new code") }
+        format.json { render_jsend(fail: {verification_token: "is not correct or too old"}, render: {status: 400}) }
       end
     end
   end

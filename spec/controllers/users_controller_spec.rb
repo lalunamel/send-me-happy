@@ -15,7 +15,7 @@ describe UsersController do
       user = create :user
       get :show, :format => :json, :id => user.id
 
-      expect(response).to be_success
+      expect(response.status).to eq 200
       expect(response.body).to eq expected_user_jsend(user)
     end
 
@@ -46,7 +46,7 @@ describe UsersController do
     it "should create a user and return the serialized json of that user" do
       post :create, :format => :json, phone: @built_user.phone, message_frequency: @built_user.message_frequency
       
-      expect(response).to be_success
+      expect(response.status).to eq 200
       expect(response.body).to eq expected_user_jsend(User.last)
       expect(User.last.phone).to eq normalize_phone(@built_user.phone)
     end
@@ -54,7 +54,7 @@ describe UsersController do
     it "should create a valid user when given a phone number but not a message_frequency" do
       post :create, :format => :json, phone: @built_user.phone
 
-      expect(response).to be_success
+      expect(response.status).to eq 200
       expect(response.body).to eq expected_user_jsend(User.last)
       expect(User.last.phone).to eq normalize_phone(@built_user.phone)
     end
@@ -89,6 +89,7 @@ describe UsersController do
           @two_factor_serv.should_receive(:send_verification_code)
 
           post :create, :format => :json, phone: @built_user.phone, message_frequency: @built_user.message_frequency
+          expect(response.status).to eq 200
         end
       end
 
@@ -98,6 +99,7 @@ describe UsersController do
         post :create, :format => :json, phone: @built_user.phone, message_frequency: @built_user.message_frequency
 
         expect(response.body).to eq (JSON({ status: "error", message: "Your message failed to send. Please try again" }))
+        expect(response.status).to eq 500
       end
     end
   end
@@ -112,7 +114,7 @@ describe UsersController do
 
       user = User.first
       
-      expect(response).to be_success
+      expect(response.status).to eq 200
       expect(response.body).to eq expected_user_jsend(@user)
     end
 
@@ -127,7 +129,7 @@ describe UsersController do
     it "should not change anything about the user and return status = 200 when only the id is given" do
       put :update, format: :json, id: @user.id
 
-      expect(response).to be_success
+      expect(response.status).to eq 200
       expect(response.body).to eq expected_user_jsend(@user)
     end
   end
@@ -151,25 +153,28 @@ describe UsersController do
       @two_factor_serv.should_receive(:valid_token?).with(@token)
 
       post :verify, format: :json, verification_token: @token
+      expect(response.status).to eq 200
     end
 
     it "should render the proper json response on success" do
       post :verify, format: :json, verification_token: @token
     
       expect(response.body).to eq expected_jsend("success", true)
+      expect(response.status).to eq 200
     end
     
     it "should render the proper json response on invalid token" do
       @two_factor_serv.stub(:valid_token?) { false }
       post :verify, format: :json, verification_token: @token
     
-      expect(response.body).to eq expected_jsend("error", nil, "The verification code you entered is not correct or is too old. Please request a new code")
+      expect(response.body).to eq expected_jsend("fail", { verification_token: "is not correct or too old" })
+      expect(response.status).to eq 400
     end
 
     it "should require a verification_code" do
       post :verify, format: :json
       expect(response.body).to eq expected_jsend("fail", { verification_token: "can't be blank" })
+      expect(response.status).to eq 400
     end
   end
-
 end
