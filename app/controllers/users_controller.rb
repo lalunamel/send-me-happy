@@ -25,7 +25,7 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render_jsend(error: "Your message failed to send. Please try again", render: { status: 500 })}
+        format.json { render_jsend(error: "Your message failed to send. Please try again", render: {status: 500})}
       end
     end
   end
