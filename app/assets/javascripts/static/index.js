@@ -13,38 +13,37 @@ Smh.StaticController.index = {
 		$form.find('p').remove();
 	    $.ajax({
 	      type: $form.attr('method'),
+	      dataType: 'json',
 	      url: $form.attr('action'),
 	      data: $form.serialize()
 	    })
 	    .done(function(response){ 
-	    	var message = "";
-	    		response = response.responseJSON || JSON.parse(response.responseText);
+	    	var message = "", json = response.responseJSON;
 
-	    	if (response.status == "fail") {
-	    		for(key in response.data) {
+	    	if (json.status == "fail") {
+	    		for(key in json.data) {
 	    			if(message.length > 0) 
 	    				message += "\n";
-	    			message += "That " + key + " " + response.data[key];
+	    			message += "That " + key + " " + json.data[key];
 	    		}
 	    	}
-	    	else if (response.status == "error") {
-	    		message = response.message
+	    	else if (json.status == "error") {
+	    		message = json.message
 	    	}
 
 	    	if(!!message) 
 		    	Smh.StaticController.index.insertMessage($input, message, true)
 	    })
 	    .fail(function(response) {
-	    	var message = "";
-	    		response = response.responseJSON || JSON.parse(response.responseText);
+	    	var message = "", json = response.responseJSON;
 
-    		if(response.status === "fail") {
-    			_.each(response.data, function(value, key) {
+    		if(json.status === "fail") {
+    			_.each(json.data, function(value, key) {
     				message += [_(key).capitalize(), " ", value].join("");
     			});
     		}
-    		else if(response.status === "error") {
-    			message = response.message;
+    		else if(json.status === "error") {
+    			message = json.message;
     		}
     		else {
     			message = "Something nasty happened and we were unable to complete your request";

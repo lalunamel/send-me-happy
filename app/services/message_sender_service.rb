@@ -9,7 +9,12 @@ class MessageSenderService
 	# sends a message by setting up, calling send_sms, then handling the response
 	def deliver_message
 		text = interpolate_text @template.text
-		sent_sms = send_sms("+#{@user.phone}", text)
+		begin 
+			sent_sms = send_sms("+#{@user.phone}", text)
+		rescue Exception => e
+			logger.info "Exception thrown interacting with Twillio: #{e}"
+			return false
+		end
 
 		if(sent_sms.status != "failed")
 			message = Message.create!(user: @user, template: @template, text: text)

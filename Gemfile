@@ -22,6 +22,7 @@ group :doc do
 end
 
 group :development, :test do
+  gem 'quiet_assets'
   gem 'rspec-rails', '~> 2.0'
   gem 'byebug'
   gem 'jasmine'

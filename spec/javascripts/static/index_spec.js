@@ -37,6 +37,7 @@ describe("#submitForm", function() {
 		$button.click();
 		expect($.ajax).toHaveBeenCalledWith({
 			type: "post",
+			dataType: 'json',
 			url: "/users",
 			data: "phone=123"
 		});

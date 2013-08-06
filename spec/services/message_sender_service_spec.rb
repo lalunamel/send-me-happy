@@ -31,7 +31,14 @@ describe MessageSenderService do
 
 			@service.deliver_message
 		end
-		
+
+		it "should fail if an exception is thrown while sending" do
+			template = create :template, text: "hello _foo_ world"
+			@service = MessageSenderService.new(user: @user, template: template, interpolation: { _foo_: "foo" })
+			@service.stub(:send_sms) { raise "Error!" }
+
+			expect(@service.deliver_message).to eq false
+		end
 	end
 	
 

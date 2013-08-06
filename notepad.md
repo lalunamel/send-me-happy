@@ -55,7 +55,12 @@
 		  (User enters phone successfully, phone input dissapears and verification code input appears in it's place)
 		  In this case, only one input is visible at a time
 		* Show success messages
-		* Input would be highlighted green
+		* Input would be highlighted 
+
+	### Verification code resend
+		How should requesting another verification code be handled?
+		Right now: If 'Send verfication code' button is pressed, server returns a 'phone already taken' error
+		Later: Clicking that button again should try to send a message to your phone again
 		
 
 
