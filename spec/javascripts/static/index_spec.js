@@ -49,7 +49,7 @@ describe("#submitForm", function() {
 	}); 	
 
 	it("should clear the previous message before making the ajax request", function() {
-		spyOn($, 'ajax').andReturn($.Deferred().resolve(AjaxFixture.create.fail));
+		spyOn($, 'ajax').andReturn($.Deferred().reject(AjaxFixture.create.fail));
 		$button.click();
 		$button.click();
 		$button.click();

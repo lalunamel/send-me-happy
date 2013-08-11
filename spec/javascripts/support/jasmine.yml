@@ -18,6 +18,7 @@ src_files:
   - spec/javascripts/helpers/mock-ajax.js
   - app/assets/javascripts/application.js
   - spec/javascripts/fixtures/ajax_fixture.js
+  - app/assets/javascripts/send_me_happy.js
   - app/assets/javascripts/**/*.js
 
 # stylesheets
