@@ -4,7 +4,7 @@ Smh.StaticController = Smh.StaticController || {};
 Smh.StaticController.index = {
 	init: function() {
 		$('.sign-up-flow-container .button').click(this.submitForm);
-		$('.verification, .message-frequency').hide();
+		$('.verification, .message-frequency, .success-message').hide();
 	},
 
 	submitForm: function(event) {

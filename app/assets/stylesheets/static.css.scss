@@ -8,23 +8,54 @@
 	Red: rgb(236, 28, 28)
 */
 
-$button-background-color: #9eec0f;
+$green-button-background-color: #9eec0f;
+$red-button-background-color: #F56565;
 $sign-up-width: 320px;
 $error-color: #FF5D5D;
 
 .button {
-	background-color: $button-background-color;
+
+	width: 100%;
+	height: 45px;
+	margin: 10px 0 40px 0;
+	padding-top: 10px;
+	display: inline-block;
+	text-align: center;
+	text-decoration: none;
 	border-radius: 3px;
-	border-top: 1px solid lighten($button-background-color, 10%);
-	border-bottom: 1px solid darken($button-background-color, 10%);
 	color: rgb(50,50,50);
 	font-weight: 700;
 	box-shadow: 0px 1px 4px -2px rgb(87, 87, 87);
 
+
+	&.foreward {
+		background-color: $green-button-background-color;
+		border-top: 1px solid lighten($green-button-background-color, 10%);
+		border-bottom: 1px solid darken($green-button-background-color, 10%);
+	}
+
+	&.backward {
+		background-color: $red-button-background-color;
+		border-top: 1px solid lighten($red-button-background-color, 10%);
+		border-bottom: 1px solid darken($red-button-background-color, 15%);
+	}
+
+	&.half-size {
+		width: 48%;
+	}
+
 	&:hover {
-			border: 1px solid darken($button-background-color, 5%);
-			border-bottom: 1px solid darken($button-background-color, 10%);
-			box-shadow: 1px solid gray;
+		&.foreward {
+			border: 1px solid darken($green-button-background-color, 5%);
+			border-bottom: 1px solid darken($green-button-background-color, 10%);
+		}
+
+		&.backward {
+			border: 1px solid darken($red-button-background-color, 5%);
+			border-bottom: 1px solid darken($red-button-background-color, 20%);
+		}
+		
+		box-shadow: 1px solid gray;
 	}
 
 	&:active {
@@ -63,18 +94,6 @@ $error-color: #FF5D5D;
 		}
 	}
 
-	.button {
-		width: 100%;
-		height: 45px;
-		margin: 10px 0 40px 0;
-		padding-top: 10px;
-		display: inline-block;
-		text-align: center;
-		text-decoration: none;
-
-		
-	}
-
 	.label {
 		margin-bottom: 5px;
 		margin: 0 0 5px 0;
@@ -93,7 +112,8 @@ $error-color: #FF5D5D;
 
 		&:focus {
 			background-color: lighten($background-input, 10%);
-			border-color: darken($border-input, 20%);
+			border: 1px solid $border-input;
+			outline: 0;
 		}
 	}
 
@@ -101,4 +121,12 @@ $error-color: #FF5D5D;
 		height: 30px;
 		font-size: 20px;
 	}
+}
+
+.float-left {
+	float: left;
+}
+
+.float-right {
+	float: right;
 }

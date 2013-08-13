@@ -1,18 +1,19 @@
 <h1 class="callout-copy">Kind words on a schedule</h1>
-<a href="#" id="sign-up" class="button"></a>
 <h4 class="sign-up-copy">Use your phone number to sign up for Send Me Happy and receive motivational text messages every day, week, or month.</h6>
 <div class="sign-up-flow-container">
 	<div class="phone">
 	<%= form_tag({controller: "users", action: "create"}, method: "post") do %>
 	  <h3 class="label">Enter your phone to begin</h3>
 	  <input name="phone" type="text" placeholder="(234) 234 - 4567">
-	  <a href="#" class="button">Send Verification Code</a>
+	  <a href="#" class="button foreward">Send Verification Code</a>
 	<% end -%>
 	</div>
 	<div class="verification">
 		<%= form_tag({controller: "users", action: "verify"}, method: "post") do %>
-			<input type="text" name="verification_token" placeholder="Enter verification code">
-			<a href="#" class="button">Verify Code</a>
+			<h3 class="label">Enter your verification code</h3>
+			<input type="text" name="verification_token" placeholder="123456">
+			<a href="#" class="button backward half-size float-left">Resend Code</a>
+			<a href="#" class="button foreward half-size float-right">Verify Code</a>
 		<% end -%>
 	</div>
 	<div class="message-frequency">
@@ -24,7 +25,10 @@
 				<option value="7">Every Week</option>
 				<option value="30">Every Month</option>
 			</select>
-			<a href="#" class="button">Done</a>
+			<a href="#" class="button foreward">Done</a>
 		<% end -%>
+	</div>
+	<div class="success-message">
+		<h3 class="label">Thanks for signing up! We've  sent your first message already. Hope you like it!</h3>
 	</div>
 </div>
