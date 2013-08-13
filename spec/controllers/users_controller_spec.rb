@@ -134,6 +134,23 @@ describe UsersController do
     end
   end
 
+  describe "POST send_verification_code" do
+    before :each do
+      @user = create :user
+      @two_factor_serv = double("TwoFactorAuthService")
+      TwoFactorAuthService.stub(:new) { @two_factor_serv }
+      @two_factor_serv.stub(:send_verification_code) { true }
+    end
+
+    it "should call send_verification_code on two_factor_service" do
+      TwoFactorAuthService.should_receive(:new).with(@user)
+      @two_factor_serv.should_receive(:send_verification_code)
+
+      post :send_verification_code, :format => :json, id: @user.id
+      expect(response.status).to eq 200
+    end
+  end
+
   describe "POST verify" do
     before :each do
       stub_time
