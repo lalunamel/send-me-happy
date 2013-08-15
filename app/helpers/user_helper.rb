@@ -8,4 +8,15 @@ module UserHelper
 			params.require(:id)
 		end
 	end
+
+	# Custom route helpers
+	def users_send_verification_code_path(id = nil)
+		id_ = "/#{id}"
+		"/users#{id_}/send_verification_code"
+	end
+
+	def users_verify_path(id = nil)
+		id_ = "/#{id}"
+		"/users#{id_}/verify"
+	end
 end

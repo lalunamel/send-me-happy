@@ -3,33 +3,31 @@ beforeEach(function() {
 	loadFixtures('static_spec.html');
 	index = Smh.StaticController.index;
 	jasmine.Ajax.useMock();
-	buttons = $('.sign-up-flow-container .button');
+	$buttons = $('.sign-up-flow-container .button');
 });
 
 describe("#init", function() {
-	it("should bind the submitForm function to the click event", function() {
-		spyOn(index, 'submitForm');
+	it("should bind the submitData function to the click event on buttons", function() {
+		spyOn(index, 'submitData');
 
 		index.init();
-		buttons.first().click();
-		expect(index.submitForm).toHaveBeenCalled();
+		$buttons.first().click();
+		expect(index.submitData).toHaveBeenCalled();
 	}); 
 });
 
-describe("#submitForm", function() {
-	var $button, event, $form, spyEvent, $ajax;
+describe("#submitData", function() {
+	var $button, event, spyEvent, $ajax;
 
 	beforeEach(function(){
-		$form = $('.sign-up-flow-container .phone form');
-		$input = $form.children('input,select');
+		$input = $('.sign-up-flow-container .phone input');
 		$button = $('.sign-up-flow-container .phone .button');
 
 		$input.val(123);
-		$button.click(index.submitForm);
+		$button.click(index.submitData);
 		
 		spyEvent = spyOnEvent($('.sign-up-flow-container .phone .button'), 'click');
 		jasmine.Ajax.useMock();
-		$ajax = jasmine.Ajax.jQueryMock().send(AjaxFixture.create.fail);
 	});
 
 	it("should make an ajax call", function() {
@@ -46,31 +44,20 @@ describe("#submitForm", function() {
 	it("should prevent default on event", function() {
 		$button.click();
 		expect(spyEvent).toHaveBeenPrevented();
-	}); 	
-
-	it("should clear the previous message before making the ajax request", function() {
-		spyOn($, 'ajax').andReturn($.Deferred().reject(AjaxFixture.create.fail));
-		$button.click();
-		$button.click();
-		$button.click();
-		expect($('.sign-up-flow-container .phone p')).toExist();
 	}); 
 
-	it("should remove the error class from the container", function() {
-		index.insertMessage($input, "", false);
-		$button.click();
-		expect($form.parent()).not.toHaveClass('error');
-	});
+	describe("success", function() {
+		beforeEach(function() {
+			$ajax = jasmine.Ajax.jQueryMock().send(AjaxFixture.create.success);
+		});
 
-	it("should remove message next to the button clicked", function() {
-		index.insertMessage($input, "", false);
-		$button.click();
-		expect($form.parent()).not.toContain('p.message');
-	});
+		// Nothing in here yet	
+	});	
 
-	describe("on failure or error", function() {
+	describe("failure", function() {
 		beforeEach(function(){
 			spyOn(index, 'insertMessage');
+			$ajax = jasmine.Ajax.jQueryMock().send(AjaxFixture.create.fail);
 		});
 
 		it("should handle ajax failure", function() {
@@ -96,6 +83,12 @@ describe("#submitForm", function() {
 			$button.click();
 			expect(index.insertMessage).toHaveBeenCalledWith($input, "Something nasty happened and we were unable to complete your request", true);
 		});
+
+		it("should call resetMessages", function() {
+			spyOn(index, 'resetMessages');
+			$button.click();
+			expect(index.resetMessages).toHaveBeenCalled();
+		}); 
 	});
 });
 
@@ -127,10 +120,25 @@ describe("#insertMessage", function() {
 		expect($inputElement.next()).toBe("a");
 	});
 
-	// Move this functionality into a separate function?
 	it("should apply the error class to the container if 'error' is true", function() {
 		index.insertMessage($section.find('input'), message, true);
-
 		expect($section).toBe("div.error");
+	});
+});
+
+describe("resetMessages", function() {
+	beforeEach(function() {
+		$(".phone input").addClass("error");
+		$(".phone input").after("<p class='message'>hello world</p>");
+	});
+
+	it("should remove the error class from inputs that have it", function() {
+		index.resetMessages();
+		expect($(".phone input")).not.toHaveClass("error");
+	});
+
+	it("should remove any paragraph element that has class = message", function() {
+		index.resetMessages();
+		expect($("p.message")).not.toExist();
 	});
 });

@@ -1,24 +1,32 @@
+<div class="main">
+
+		<h1 class="callout-copy">Kind words on a schedule</h1>
+<h4 class="sign-up-copy">Use your phone number to sign up for Send Me Happy and receive motivational text messages every day, week, or month.</h4>
 <div class="sign-up-flow-container">
 	<div class="phone">
-	<form accept-charset="UTF-8" action="/users" method="post"><div style="margin:0;padding:0;display:inline"></div>
 	  <h3 class="label">Enter your phone to begin</h3>
-	  <input name="phone" type="text" placeholder="(234) 234 - 4567">
-	  <a href="#" class="button">Send Verification Code</a>
-</form>	</div>
-	<div class="verification">
-		<form accept-charset="UTF-8" action="/users/verify" method="post"><div style="margin:0;padding:0;display:inline"></div>
-			<input type="text" name="verification_token" placeholder="Enter verification code">
-			<a href="#" class="button">Verify Code</a>
-</form>	</div>
-	<div class="message-frequency">
-		<form accept-charset="UTF-8" action="/users" method="post"><div style="margin:0;padding:0;display:inline"><input name="_method" type="hidden" value="put"></div>
-			<h3 class="label">I want to receive messages...</h3>
-			<select name="message_frequency" id="message-frequency-iwnput">
-				<option value="1">Every Day</option>
-				<option value="3">Every Few Days</option>
-				<option value="7">Every Week</option>
-				<option value="30">Every Month</option>
-			</select>
-			<a href="#" class="button">Done</a>
-</form>	</div>
+	  <input name="phone" type="text" data-form-input="true" placeholder="(234) 234 - 4567">
+	  <a href="#" class="button foreward" data-endpoint="/users" data-method="post">Send Verification Code</a>
+	</div>
+	<div class="verification" style="display: none;">
+		<h3 class="label">Enter your verification code</h3>
+		<input type="text" name="verification_token" data-form-input="true" placeholder="123456">
+		<a href="#" class="button backward half-size float-left" data-endpoint="/users//send_verification_code" data-method="post">Resend Code</a>
+		<a href="#" class="button foreward half-size float-right" data-endpoint="/users//verify" data-method="post">Verify Code</a>
+	</div>
+	<div class="message-frequency" style="display: none;">
+		<h3 class="label">I want to receive messages...</h3>
+		<select name="message_frequency" id="message-frequency-input" data-form-input="true">
+			<option value="1">Every Day</option>
+			<option value="3">Every Few Days</option>
+			<option value="7">Every Week</option>
+			<option value="30">Every Month</option>
+		</select>
+		<a href="#" class="button foreward" data-endpoint="/users" data-method="put">Done</a>
+	</div>
+	<div class="success-message" style="display: none;">
+		<h3 class="label">Thanks for signing up! We've  sent your first message already. Hope you like it!</h3>
+	</div>
 </div>
+		
+	</div>

@@ -3,24 +3,28 @@ _.mixin(_.string.exports());
 Smh.StaticController = Smh.StaticController || {};
 Smh.StaticController.index = {
 	init: function() {
-		$('.sign-up-flow-container .button').click(this.submitForm);
+		// bind button click to submit it's data
+		$('.sign-up-flow-container .button').click(this.submitData);
+		// hide every step except for the first
+		// these will be shown as the user clicks through each step
 		$('.verification, .message-frequency, .success-message').hide();
 	},
 
-	submitForm: function(event) {
-		var $form = $(event.target).closest('form');
-		var $input = $form.children('input,select');
+	submitData: function(event) {
+		$button = $(event.target);
+		endpoint = $button.data('endpoint');
+		method = $button.data('method');
 
-		Smh.StaticController.index.resetMessage($form);
+		Smh.StaticController.index.resetMessages();
 
 	    $.ajax({
-	      type: $form.attr('method'),
+	      type: $button.data('method'),
 	      dataType: 'json',
-	      url: $form.attr('action'),
-	      data: $form.serialize()
+	      url: $button.data('endpoint'),
+	      data: $button.parent().find('input,select').serialize()
 	    })
 	    .done(function(response){
-	    	Smh.StaticController.index.slideSectionUp($form.parent());
+	    	Smh.StaticController.index.slideSectionUp($button.parent());
 	    })
 	    .fail(function(response) {
 	    	var message = "", json = response.responseJSON;
@@ -55,9 +59,9 @@ Smh.StaticController.index = {
 		}
 	},
 
-	resetMessage: function($form) {
-		$form.parents('div').first().removeClass('error');
-		$form.find('p').remove();
+	resetMessages: function() {
+		$('.error').removeClass('error');
+		$('p.message').remove();
 	},
 
 	slideSectionUp: function($element) {
