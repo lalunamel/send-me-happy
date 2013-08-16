@@ -1,19 +1,69 @@
-var index, $buttons;
+var index, $phoneButton;
 beforeEach(function() {
 	loadFixtures('static_spec.html');
 	index = Smh.StaticController.index;
 	jasmine.Ajax.useMock();
-	$buttons = $('.sign-up-flow-container .button');
+	$phoneButton = $('.sign-up-flow-container .button');
 });
 
 describe("#init", function() {
-	it("should bind the submitData function to the click event on buttons", function() {
-		spyOn(index, 'submitData');
-
+	it("should bind the submitData function to the click event on phoneButton", function() {
+		var button = $phoneButton.first()[0];
 		index.init();
-		$buttons.first().click();
-		expect(index.submitData).toHaveBeenCalled();
+		expect($phoneButton).toHandleWith('click', Smh.StaticController.index.submitData);
 	}); 
+
+	it("should bind the handleEnter function to the keydown event on inputs", function() {
+		var $input = $phoneButton.siblings('input');
+		index.init();
+		expect($input).toHandleWith('keydown', Smh.StaticController.index.handleEnter);
+	}); 
+});
+
+describe('#handleEnter', function() {
+	beforeEach(function() {
+		index.init();
+		spyOn(Smh.StaticController.index, 'submitData');
+	});
+
+	describe("on sections with only one button", function() {
+		var e, clickSpy;
+		beforeEach(function() {
+			clickSpy = spyOnEvent('.sign-up-flow-container .phone .button', 'click');
+			e = $.Event('keydown');
+		});
+
+		it("should trigger a click on the nearest button when Enter is pressed", function() {
+			e.which = 13;
+			$phoneButton.siblings('input').trigger(e);
+
+			expect(clickSpy).toHaveBeenTriggered();
+		});
+
+		it("should not trigger a click when Enter is not pressed", function() {
+			e.which = 99;
+			$phoneButton.siblings('input').trigger(e);
+
+			expect(clickSpy).not.toHaveBeenTriggered();
+		});
+	});
+
+	describe("on sections with two buttons", function() {
+		var e, clickSpy;
+		beforeEach(function() {
+			forewardClickSpy = spyOnEvent('.sign-up-flow-container .verification .button.foreward', 'click');
+			backwardClickSpy = spyOnEvent('.sign-up-flow-container .verification .button.backward', 'click');
+			e = $.Event('keydown');
+			e.which = 13;
+		});
+		
+		it("should only trigger a click event on phoneButton with class .success", function() {
+			$('.sign-up-flow-container .verification input').trigger(e);
+
+			expect(forewardClickSpy).toHaveBeenTriggered();
+			expect(backwardClickSpy).not.toHaveBeenTriggered();
+		});
+	});
 });
 
 describe("#submitData", function() {

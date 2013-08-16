@@ -5,9 +5,22 @@ Smh.StaticController.index = {
 	init: function() {
 		// bind button click to submit it's data
 		$('.sign-up-flow-container .button').click(this.submitData);
+		// bind enter to handleEnter
+		$('input').keydown(this.handleEnter);
 		// hide every step except for the first
 		// these will be shown as the user clicks through each step
 		$('.verification, .message-frequency, .success-message').hide();
+	},
+
+	handleEnter: function(event) {
+		if(event.which == 13) { // Enter key code
+			$input = $(event.target);
+			$anchor = $input.siblings('a.foreward');
+			e = $.Event('click');
+			e.target = $anchor[0];
+
+			$anchor.trigger(e);
+		}
 	},
 
 	submitData: function(event) {
