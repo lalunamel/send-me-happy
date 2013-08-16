@@ -68,27 +68,28 @@ describe TwoFactorAuthService do
 			@token = (SecureRandom.random_number*(6**10)).to_i.to_s[0...6]
 			User.any_instance.stub(:verification_code) { {verification_token: @token, verification_token_created_at: Time.now} }
 		end
-		it "should return true if tokens match and have been created less than five minutes ago" do
-			expect(@service.valid_token?(@token)).to be_true
+
+		it "should return '' if tokens match and have been created less than five minutes ago" do
+			expect(@service.valid_token?(@token)).to eq ''
 		end
 
-		it "should return false if a validation token has not been set on a user" do
+		it "should return 'is not correct' if a validation token has not been set on a user" do
 			User.any_instance.stub(:verification_code) { {verification_token: nil, verification_token_created_at: nil} }
 
-			expect(@service.valid_token?(@token)).to be_false
+			expect(@service.valid_token?(@token)).to eq 'is not correct'
 		end
 
 		context "tokens don't match" do
-			it "should return false if created > five mins" do
+			it "should return 'is too old' if created > five mins" do
 				User.any_instance.stub(:verification_code) { {verification_token: @token, verification_token_created_at: 1.day.ago} }
 
-				expect(@service.valid_token?("654321")).to be_false
+				expect(@service.valid_token?("654321")).to eq 'is too old'
 			end
 
-			it "should return false if created < five mins" do
+			it "should return 'is not correct' if created < five mins" do
 				User.any_instance.stub(:verification_code) { {verification_token: @token, verification_token_created_at: Time.now} }
 
-				expect(@service.valid_token?("654321")).to be_false
+				expect(@service.valid_token?("654321")).to eq 'is not correct'
 			end
 		end
 	end

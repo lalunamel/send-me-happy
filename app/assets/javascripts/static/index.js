@@ -25,6 +25,7 @@ Smh.StaticController.index = {
 
 	submitData: function(event) {
 		$button = $(event.target);
+		$input = $button.siblings('input,select');
 		endpoint = $button.data('endpoint');
 		method = $button.data('method');
 

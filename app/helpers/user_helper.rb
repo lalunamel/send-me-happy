@@ -11,12 +11,12 @@ module UserHelper
 
 	# Custom route helpers
 	def users_send_verification_code_path(id = nil)
-		id_ = "/#{id}"
+		id_ = "/#{id}" unless id == nil
 		"/users#{id_}/send_verification_code"
 	end
 
 	def users_verify_path(id = nil)
-		id_ = "/#{id}"
+		id_ = "/#{id}" unless id == nil
 		"/users#{id_}/verify"
 	end
 end

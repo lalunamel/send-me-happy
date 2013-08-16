@@ -16,13 +16,16 @@ class TwoFactorAuthService
 	def valid_token?(input_token)
 		code = @user.verification_code
 		if code[:verification_token].present? && code[:verification_token_created_at].present?
-			is_match = code[:verification_token] == input_token
-			is_recent = code[:verification_token_created_at] > 5.minutes.ago
-
-			is_match && is_recent
+			if 5.minutes.ago > code[:verification_token_created_at] # not recent enough
+				'is too old'
+			elsif code[:verification_token] != input_token # tokens don't match
+				'is not correct'
+			else
+				''
+			end
 		else
 			logger.warn "User #{@user} tried checking their validation code before it was set"
-			false
+			'is not correct'
 		end
 	end
 

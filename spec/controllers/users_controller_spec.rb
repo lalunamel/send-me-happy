@@ -161,7 +161,7 @@ describe UsersController do
 
       User.stub(:find) { @user }
       TwoFactorAuthService.stub(:new) { @two_factor_serv }
-      @two_factor_serv.stub(:valid_token?) { true }
+      @two_factor_serv.stub(:valid_token?) { '' }
     end
 
     it "should accept an id and input code and check if the input code matches the real code" do
@@ -181,10 +181,10 @@ describe UsersController do
     end
     
     it "should render the proper json response on invalid token" do
-      @two_factor_serv.stub(:valid_token?) { false }
+      @two_factor_serv.stub(:valid_token?) { 'is not correct' }
       post :verify, format: :json, verification_token: @token
     
-      expect(response.body).to eq expected_jsend("fail", { verification_token: "is not correct or too old" })
+      expect(response.body).to eq expected_jsend("fail", { verification_token: "is not correct" })
       expect(response.status).to eq 400
     end
 

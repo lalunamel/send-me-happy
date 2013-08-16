@@ -50,19 +50,18 @@ class UsersController < ApplicationController
   # POST users/1/verify
   def verify
     params.require(:verification_token)
-    
     user = User.find(get_id)
 
     two_factor_service = TwoFactorAuthService.new(user)
-    token_is_valid = two_factor_service.valid_token?(params.require(:verification_token))
+    error = two_factor_service.valid_token?(params.require(:verification_token))
 
-    if token_is_valid
+    if error == ''
       respond_to do |format|
-        format.json { render_jsend(success: token_is_valid) }
+        format.json { render_jsend(success: true) }
       end
     else
       respond_to do |format|
-        format.json { render_jsend(fail: {verification_token: "is not correct or too old"}, render: {status: 400}) }
+        format.json { render_jsend(fail: {verification_token: error}, render: {status: 400}) }
       end
     end
   end
