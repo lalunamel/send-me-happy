@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
 
 private
 	def verification_token_validation
-		errors.add(:verification_token, "must be a string") if self.verification_token.present? && self.verification_token.class != String
-		errors.add(:verification_token, "must be a 6 digit number") if self.verification_token.present? && self.verification_token.length != 6
+		errors.add(:verification_token, I18n.translate("activerecord.errors.models.user.attributes.verification_token.string", attribute: "verification code")) if self.verification_token.present? && self.verification_token.class != String
+		errors.add(:verification_token, I18n.translate("activerecord.errors.models.user.attributes.verification_token.length", attribute: "verification code")) if self.verification_token.present? && self.verification_token.length != 6
 	end
 end

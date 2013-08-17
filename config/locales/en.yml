@@ -20,4 +20,29 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+    activerecord:
+        models:
+            user: "User"
+        attributes:
+            user:
+                phone: "phone number"
+                message_frequency: "message frequency"
+                verification_token: "verification code"
+        errors:
+            models:
+                user:
+                    attributes:
+                        phone:
+                            blank: "Please enter a %{attribute}"
+                            taken: "That %{attribute} is already registered"
+                            improbable_phone: "Please enter a valid %{attribute}"
+                        message_frequency:
+                            blank: "Please enter a ${attribute}"
+                            greater_than_or_equal_to: "Please enter a valid %{attribute}"
+                            not_a_number: "Please enter a valid %{attribute}"
+                            invalid: "Please enter a valid %{attribute}"
+                        verification_token:
+                            string: "Please enter a valid %{attribute}"
+                            length: "Please enter a six digit %{attribute}"
+                            age: "That %{attribute} has expired, please request a new one"
+                            invalid: "That %{attribute} is not correct"

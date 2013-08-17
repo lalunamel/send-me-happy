@@ -4,14 +4,16 @@ describe User do
   describe "attribute" do
 
     describe "phone" do
+      let(:phone_blank) { I18n.translate('activerecord.errors.models.user.attributes.phone.blank', attribute: "phone number") }
+
       it "should not validate with an invalid phone number" do
         user = build :user, :phone => "blah!"
-        expect_validation_error_on(user, :phone, "can't be blank")
+        expect_validation_error_on(user, :phone, phone_blank)
       end
 
       it "should not validate with without a phone number" do
         user = build :user, :phone => nil
-        expect_validation_error_on(user, :phone, "can't be blank")
+        expect_validation_error_on(user, :phone, phone_blank)
       end
 
       it "should normailze a valid phone number and persist it" do
@@ -49,14 +51,17 @@ describe User do
     end
 
     describe "message frequency" do
-      it "should not validate with a message_frequency" do 
+      let(:message_frequency_invalid) { I18n.translate('activerecord.errors.models.user.attributes.message_frequency.invalid', attribute: "message frequency") }
+      let(:message_frequency_greater_than_or_equal_to) { I18n.translate('activerecord.errors.models.user.attributes.message_frequency.greater_than_or_equal_to', attribute: "message frequency") }
+
+      it "should not validate without a message_frequency" do 
         user = build :user, :message_frequency => nil
-        expect_validation_error_on(user, :message_frequency, "is not a number")
+        expect_validation_error_on(user, :message_frequency, message_frequency_invalid)
       end
 
       it "should not validate with a message frequency less than 1" do
         user = build :user, :message_frequency => 0
-        expect_validation_error_on(user, :message_frequency, "must be greater than or equal to 1")
+        expect_validation_error_on(user, :message_frequency, message_frequency_greater_than_or_equal_to)
       end
 
       it "should have a default message frequency of 1" do
@@ -66,6 +71,8 @@ describe User do
     end
 
     describe "verification code" do
+      let(:verification_code_length) { I18n.translate('activerecord.errors.models.user.attributes.verification_token.length', attribute: "verification code") }
+
       describe "database column 'verification_token'" do
         it "should be a six digit number" do
           user = create :user
@@ -74,10 +81,10 @@ describe User do
           expect_save_and_validate(user)
 
           user.verification_token = "123"
-          expect_validation_error_on(user, :verification_token, "must be a 6 digit number")
+          expect_validation_error_on(user, :verification_token, verification_code_length)
 
           user.verification_token = "123456789"
-          expect_validation_error_on(user, :verification_token, "must be a 6 digit number")
+          expect_validation_error_on(user, :verification_token, verification_code_length)
         end
       end      
 

@@ -61,7 +61,21 @@
 		How should requesting another verification code be handled?
 		Right now: If 'Send verfication code' button is pressed, server returns a 'phone already taken' error
 		Later: Clicking that button again should try to send a message to your phone again
-		
+
+	### Error messages
+	Options:
+		Please enter a (ERROR_CORRECT) (NOUN)
+		That (NOUN) is (ERROR_INCORRECT)
+
+		Please enter a valid phone number
+		Please enter a verification code that matches
+		Please enter a verification code that is more recent
+		Please select a valid message frequency
+
+		That phone number is not valid
+		That verification code is not correct
+		That verification code is too old
+		That message frequency is not valid
 
 
 To get jasmine to equate jquery objects:

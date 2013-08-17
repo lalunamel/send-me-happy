@@ -73,23 +73,23 @@ describe TwoFactorAuthService do
 			expect(@service.valid_token?(@token)).to eq ''
 		end
 
-		it "should return 'is not correct' if a validation token has not been set on a user" do
+		it "should return the proper message if a validation token has not been set on a user" do
 			User.any_instance.stub(:verification_code) { {verification_token: nil, verification_token_created_at: nil} }
 
-			expect(@service.valid_token?(@token)).to eq 'is not correct'
+			expect(@service.valid_token?(@token)).to eq I18n.translate('activerecord.errors.models.user.attributes.verification_token.invalid', attribute: "verification code")
 		end
 
 		context "tokens don't match" do
-			it "should return 'is too old' if created > five mins" do
+			it "should return the proper message if created > five mins" do
 				User.any_instance.stub(:verification_code) { {verification_token: @token, verification_token_created_at: 1.day.ago} }
 
-				expect(@service.valid_token?("654321")).to eq 'is too old'
+				expect(@service.valid_token?("654321")).to eq I18n.translate("activerecord.errors.models.user.attributes.verification_token.age", attribute: "verification code")
 			end
 
-			it "should return 'is not correct' if created < five mins" do
+			it "should return the proper message if created < five mins" do
 				User.any_instance.stub(:verification_code) { {verification_token: @token, verification_token_created_at: Time.now} }
 
-				expect(@service.valid_token?("654321")).to eq 'is not correct'
+				expect(@service.valid_token?("654321")).to eq I18n.translate("activerecord.errors.models.user.attributes.verification_token.invalid", attribute: "verification code")
 			end
 		end
 	end

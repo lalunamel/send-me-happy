@@ -17,15 +17,15 @@ class TwoFactorAuthService
 		code = @user.verification_code
 		if code[:verification_token].present? && code[:verification_token_created_at].present?
 			if 5.minutes.ago > code[:verification_token_created_at] # not recent enough
-				'is too old'
+				I18n.translate('activerecord.errors.models.user.attributes.verification_token.age', attribute: "verification code")
 			elsif code[:verification_token] != input_token # tokens don't match
-				'is not correct'
+				I18n.translate('activerecord.errors.models.user.attributes.verification_token.invalid', attribute: "verification code")
 			else
 				''
 			end
 		else
 			logger.warn "User #{@user} tried checking their validation code before it was set"
-			'is not correct'
+			I18n.translate('activerecord.errors.models.user.attributes.verification_token.invalid', attribute: "verification code")
 		end
 	end
 
