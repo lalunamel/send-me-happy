@@ -78,6 +78,8 @@ describe("#submitData", function() {
 		
 		spyEvent = spyOnEvent($('.sign-up-flow-container .phone .button'), 'click');
 		jasmine.Ajax.useMock();
+
+		index.init();
 	});
 
 	describe("always", function() {
@@ -121,16 +123,23 @@ describe("#submitData", function() {
 	
 	describe("success", function() {
 		beforeEach(function() {
-			spyOn($, 'ajax').andReturn($.Deferred().reject(AjaxFixture.create.success));
+			spyOn($, 'ajax').andReturn($.Deferred().resolve(AjaxFixture.create.success));
 		});
 
-		it("should stop a ladda when the ajax fails", function() {
+		it("should stop a ladda when the ajax succeeds", function() {
 			var spyLadda = jasmine.createSpy();
 			spyLadda.start = $.noop;
 			spyOn(Ladda, 'create').andReturn(spyLadda);
 			spyLadda.stop = jasmine.createSpy("stop");
 			$button.click();
 			expect(spyLadda.stop).toHaveBeenCalled();
+		});
+
+		it("should not call slideSectionUp when a button without class .forward is pressed", function() {
+			$button = $('.sign-up-flow-container .button.backward').first();
+			spyOn(index, 'slideSectionUp');
+			$button.click();
+			expect(index.slideSectionUp).not.toHaveBeenCalled();
 		});
 	});	
 

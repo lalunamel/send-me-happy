@@ -44,7 +44,9 @@ Smh.StaticController.index = {
 	    	ladda.stop();
 	    })
 	    .done(function(response){
-	    	Smh.StaticController.index.slideSectionUp($button.parent());
+	    	if($button.hasClass('foreward')) {
+		    	Smh.StaticController.index.slideSectionUp($button.parent());
+	    	}
 	    })
 	    .fail(function(response) {
 	    	var message = "", json = response.responseJSON;
