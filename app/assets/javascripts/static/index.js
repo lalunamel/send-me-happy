@@ -7,6 +7,7 @@ Smh.StaticController.index = {
 		$('.sign-up-flow-container .button').click(this.submitData);
 		// bind enter to handleEnter
 		$('input').keydown(this.handleEnter);
+		$('input').keydown(this.handleReset);
 		// hide every step except for the first
 		// these will be shown as the user clicks through each step
 		$('.verification, .message-frequency, .success-message').hide();
@@ -23,6 +24,10 @@ Smh.StaticController.index = {
 		}
 	},
 
+	handleReset: function(event) {
+		Smh.StaticController.index.resetMessage($(event.currentTarget));
+	},
+
 	submitData: function(event) {
 		var $button = $(event.currentTarget);
 		var $input = $button.siblings('input,select');
@@ -32,7 +37,7 @@ Smh.StaticController.index = {
 		var ladda = Ladda.create($button[0]);
 		ladda.start();
 
-		Smh.StaticController.index.resetMessages();
+		Smh.StaticController.index.resetMessage($input);
 
 	    $.ajax({
 	      type: $button.data('method'),
@@ -70,20 +75,19 @@ Smh.StaticController.index = {
 	},
  
 	insertMessage: function($input, message, error) {
-		var messageElement = $('<p>' + message + '</p>').addClass('message');
-		if(error) $input.parents('div').first().addClass('error');
+		if(error) $input.addClass('error');
 
-		if($input.next().is('p')) {
-			$input.siblings('p').replaceWith(messageElement);
-		}
-		else {
-			$input.after(messageElement);
-		}
+		$input.val("");
+		$input.attr('data-placeholder', $input.attr('placeholder'));
+		$input.attr('placeholder', message);
 	},
 
-	resetMessages: function() {
-		$('.error').removeClass('error');
-		$('p.message').remove();
+	resetMessage: function($input) {
+		if(!$input.hasClass('error')) return;
+
+		$input.removeClass('error');
+		$input.val("");
+		$input.attr('placeholder', $input.attr('data-placeholder'));
 	},
 
 	slideSectionUp: function($element) {

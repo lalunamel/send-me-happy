@@ -84,14 +84,22 @@ $error-color: #FF5D5D;
 		font-size: 24px;
 	}
 
-	.error {
-		input {
-			border-color: $error-color;
+	input.error {
+		border-color: $error-color;
+		&::-webkit-input-placeholder { /* WebKit browsers */
+		    color:    $error-color;
 		}
-		.message {
-			color: $error-color;
-			margin: 8px 12px 10px 12px;
+		&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+		    color:    $error-color;
 		}
+		&::-moz-placeholder { /* Mozilla Firefox 19+ */
+		    color:    $error-color;
+		}
+		&:-ms-input-placeholder { /* Internet Explorer 10+ */
+		    color:    $error-color;
+		}
+
+		font-size: 20px;
 	}
 
 	.label {

@@ -18,6 +18,12 @@ describe("#init", function() {
 		index.init();
 		expect($input).toHandleWith('keydown', Smh.StaticController.index.handleEnter);
 	}); 
+
+	it("should bind handleReset to keydown on input.error elements", function() {
+		var $input = $phoneButton.siblings('input').addClass('error');
+		index.init();
+		expect($input).toHandleWith('keydown', Smh.StaticController.index.handleReset);
+	});
 });
 
 describe('#handleEnter', function() {
@@ -114,10 +120,10 @@ describe("#submitData", function() {
 			expect(spyLadda.start).toHaveBeenCalled();
 		});
 
-		it("should call resetMessages", function() {
-			spyOn(index, 'resetMessages');
+		it("should call resetMessage", function() {
+			spyOn(index, 'resetMessage');
 			$button.click();
-			expect(index.resetMessages).toHaveBeenCalled();
+			expect(index.resetMessage).toHaveBeenCalledWith($input);
 		}); 
 	});
 	
@@ -183,52 +189,77 @@ describe("#submitData", function() {
 });
 
 describe("#insertMessage", function() {
-	var $section, message, $inputElement;
+	var $section, message, $input;
 	
 	beforeEach(function() {
 		$section = $('.sign-up-flow-container .phone');
-		$inputElement = $section.find("input");
+		$input = $section.find("input");
+		$input.val("robotz");
 		message = "hello world!";
 	});
 	
-	it("should insert a message in a <p> into a section after an input or select element", function() {
-		index.insertMessage($section.find('input'), message);
-		var $insertedMessage = $section.find("p.message");
+	it("should insert a message inside the input placeholder", function() {
+		index.insertMessage($input, message);
+		var $insertedMessage = $input.attr('placeholder');
 
-		expect($insertedMessage).toBe("p.message");
-		expect($insertedMessage).toHaveText(message);
-		expect($inputElement.next()).toBe("p");
+		expect($insertedMessage).toBe(message);
 	});
 
-	it("should should also work for a select element", function() {
-		$section = $('.sign-up-flow-container .message-frequency');
-		index.insertMessage($section.find('select'), message);
-		var $insertedMessage = $section.find("p.message");
-
-		expect($insertedMessage).toBe("p.message");
-		expect($insertedMessage).toHaveText(message);
-		expect($inputElement.next()).toBe("a");
+	it("should store the original placeholder in a data-placeholder attr", function() {
+		originalPlaceholder = $input.attr('placeholder');
+		index.insertMessage($input, message);
+		expect($input.data('placeholder')).toBe(originalPlaceholder);
 	});
 
-	it("should apply the error class to the container if 'error' is true", function() {
-		index.insertMessage($section.find('input'), message, true);
-		expect($section).toBe("div.error");
+	it("should apply the error class to the input if 'error' is true", function() {
+		index.insertMessage($input, message, true);
+		expect($input).toBe("input.error");
+	});
+
+	it("should remove whatever is in the input", function() {
+		index.insertMessage($input, message, true);
+		expect($input.val()).toBe("");
 	});
 });
 
-describe("resetMessages", function() {
-	beforeEach(function() {
-		$(".phone input").addClass("error");
-		$(".phone input").after("<p class='message'>hello world</p>");
+describe("resetMessage", function() {
+	var message = "hello world",
+		error = "ERROR DOES NOT COMPUTE",
+		$input;
+
+
+	describe("successful case", function() {
+		beforeEach(function() {
+			$input = $('.phone input');
+			$input.addClass("error");
+			$input.attr("data-placeholder", message);
+			$input.attr("placeholder", error);
+
+			index.resetMessage($input);
+		});
+
+		it("should remove the error class from input's parent div", function() {
+			expect($input.parent('div').first()).not.toHaveClass("error");
+		});
+
+		it("should take the data-placeholder attr and put it in the placeholder attr", function() {
+			expect($input.attr('placeholder')).toBe(message);
+		});
 	});
 
-	it("should remove the error class from inputs that have it", function() {
-		index.resetMessages();
-		expect($(".phone input")).not.toHaveClass("error");
+	describe("unsuccessful case", function() {
+		beforeEach(function() {
+			$input = $('.phone input');
+			$input.attr("data-placeholder", message);
+			$input.attr("placeholder", error);
+
+			index.resetMessage($input);
+		});
+
+		it("should not do anything if input does not have class error", function() {
+			expect($input.attr('placeholder')).toBe("ERROR DOES NOT COMPUTE");
+		});
 	});
 
-	it("should remove any paragraph element that has class = message", function() {
-		index.resetMessages();
-		expect($("p.message")).not.toExist();
-	});
+
 });
