@@ -24,7 +24,7 @@ en:
         models:
             user: "User"
         attributes:
-            user:
+            user: 
                 id: "id"
                 phone: "phone number"
                 message_frequency: "message frequency"

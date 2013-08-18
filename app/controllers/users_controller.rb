@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   
 	# GET users/1
   def show
-    user = User.find get_id
+    user = User.find get_id 
   	respond_to do |format|
   		format.json { render_jsend(success: SerializerUtil::serialize_to_hash(user)) }
   	end

@@ -14,20 +14,23 @@ Smh.StaticController.index = {
 
 	handleEnter: function(event) {
 		if(event.which == 13) { // Enter key code
-			$input = $(event.target);
+			$input = $(event.currentTarget);
 			$anchor = $input.siblings('a.foreward');
 			e = $.Event('click');
-			e.target = $anchor[0];
+			e.currentTarget = $anchor[0];
 
 			$anchor.trigger(e);
 		}
 	},
 
 	submitData: function(event) {
-		$button = $(event.target);
-		$input = $button.siblings('input,select');
-		endpoint = $button.data('endpoint');
-		method = $button.data('method');
+		var $button = $(event.currentTarget);
+		var $input = $button.siblings('input,select');
+		var endpoint = $button.data('endpoint');
+		var method = $button.data('method');
+
+		var ladda = Ladda.create($button[0]);
+		ladda.start();
 
 		Smh.StaticController.index.resetMessages();
 
@@ -36,6 +39,9 @@ Smh.StaticController.index = {
 	      dataType: 'json',
 	      url: $button.data('endpoint'),
 	      data: $button.parent().find('input,select').serialize()
+	    })
+	    .always(function() {
+	    	ladda.stop();
 	    })
 	    .done(function(response){
 	    	Smh.StaticController.index.slideSectionUp($button.parent());
@@ -62,7 +68,7 @@ Smh.StaticController.index = {
 	},
  
 	insertMessage: function($input, message, error) {
-		messageElement = $('<p>' + message + '</p>').addClass('message');
+		var messageElement = $('<p>' + message + '</p>').addClass('message');
 		if(error) $input.parents('div').first().addClass('error');
 
 		if($input.next().is('p')) {

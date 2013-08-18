@@ -67,7 +67,7 @@ describe('#handleEnter', function() {
 });
 
 describe("#submitData", function() {
-	var $button, event, spyEvent, $ajax;
+	var $button, event, spyEvent;
 
 	beforeEach(function(){
 		$input = $('.sign-up-flow-container .phone input');
@@ -80,58 +80,36 @@ describe("#submitData", function() {
 		jasmine.Ajax.useMock();
 	});
 
-	it("should make an ajax call", function() {
-		spyOn($, 'ajax').andReturn($.Deferred().promise());
-		$button.click();
-		expect($.ajax).toHaveBeenCalledWith({
-			type: "post",
-			dataType: 'json',
-			url: "/users",
-			data: "phone=123"
-		});
-	}); 
-
-	it("should prevent default on event", function() {
-		$button.click();
-		expect(spyEvent).toHaveBeenPrevented();
-	}); 
-
-	describe("success", function() {
-		beforeEach(function() {
-			$ajax = jasmine.Ajax.jQueryMock().send(AjaxFixture.create.success);
-		});
-
-		// Nothing in here yet	
-	});	
-
-	describe("failure", function() {
-		beforeEach(function(){
-			spyOn(index, 'insertMessage');
-			$ajax = jasmine.Ajax.jQueryMock().send(AjaxFixture.create.fail);
-		});
-
-		it("should handle ajax failure", function() {
-			spyOn($, 'ajax').andReturn($.Deferred().reject(AjaxFixture.create.error));
+	describe("always", function() {
+		it("should make an ajax call", function() {
+			spyOn($, 'ajax').andReturn($.Deferred().promise());
 			$button.click();
-			expect(index.insertMessage).toHaveBeenCalledWith($input, "Something nasty happened and we were unable to complete your request", true);
-		});
-
-		it("should insert an error on failed response", function(){
-			spyOn($, 'ajax').andCallFake(function(req){
-				var deferred = $.Deferred();
-				return deferred.reject(AjaxFixture.create.fail);
+			expect($.ajax).toHaveBeenCalledWith({
+				type: "post",
+				dataType: 'json',
+				url: "/users",
+				data: "phone=123"
 			});
+		}); 
+
+		it("should prevent default on event", function() {
 			$button.click();
-			expect(index.insertMessage).toHaveBeenCalledWith($input, "Phone has already been taken", true);
+			expect(spyEvent).toHaveBeenPrevented();
 		});
 
-		it("should insert 'Something nasty happened and we were unable to complete your request' on error response", function(){
-			spyOn($, 'ajax').andCallFake(function(req){
-				var deferred = $.Deferred();
-				return deferred.reject(AjaxFixture.create.error);
-			});
+		it("should create a new ladda", function() {
+			spyOn(Ladda, 'create').andCallThrough();
 			$button.click();
-			expect(index.insertMessage).toHaveBeenCalledWith($input, "Something nasty happened and we were unable to complete your request", true);
+			expect(Ladda.create).toHaveBeenCalledWith($button[0]);
+		});
+
+		it("should start a ladda", function() {
+			var spyLadda = jasmine.createSpy();
+			spyLadda.start = jasmine.createSpy("start");
+			spyOn(Ladda, 'create').andReturn(spyLadda);
+
+			$button.click();
+			expect(spyLadda.start).toHaveBeenCalled();
 		});
 
 		it("should call resetMessages", function() {
@@ -139,6 +117,59 @@ describe("#submitData", function() {
 			$button.click();
 			expect(index.resetMessages).toHaveBeenCalled();
 		}); 
+	});
+	
+	describe("success", function() {
+		beforeEach(function() {
+			spyOn($, 'ajax').andReturn($.Deferred().reject(AjaxFixture.create.success));
+		});
+
+		it("should stop a ladda when the ajax fails", function() {
+			var spyLadda = jasmine.createSpy();
+			spyLadda.start = $.noop;
+			spyOn(Ladda, 'create').andReturn(spyLadda);
+			spyLadda.stop = jasmine.createSpy("stop");
+			$button.click();
+			expect(spyLadda.stop).toHaveBeenCalled();
+		});
+	});	
+
+	describe("failure", function() {
+		beforeEach(function(){
+			spyOn(index, 'insertMessage');
+			spyOn($, 'ajax').andReturn($.Deferred().reject(AjaxFixture.create.fail));
+		});
+
+		it("should insert an error on failed response", function(){
+			$button.click();
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "Phone has already been taken", true);
+		});
+
+		it("should stop a ladda when the ajax fails", function() {
+			var spyLadda = jasmine.createSpy();
+			spyLadda.start = $.noop;
+			spyOn(Ladda, 'create').andReturn(spyLadda);
+			spyLadda.stop = jasmine.createSpy("stop");
+			$button.click();
+			expect(spyLadda.stop).toHaveBeenCalled();
+		});
+	});
+
+	describe("error", function() {
+		beforeEach(function() {
+			spyOn(index, 'insertMessage');
+			spyOn($, 'ajax').andReturn($.Deferred().reject(AjaxFixture.create.error));
+		});
+
+		it("should handle ajax failure", function() {
+			$button.click();
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "Something nasty happened and we were unable to complete your request", true);
+		});
+
+		it("should insert 'Something nasty happened and we were unable to complete your request' on error response", function(){
+			$button.click();
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "Something nasty happened and we were unable to complete your request", true);
+		});
 	});
 });
 
