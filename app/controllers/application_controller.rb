@@ -13,9 +13,11 @@ class ApplicationController < ActionController::Base
   end
 
   def rescue_parameter_missing(e)
-  	error_hash = { e.param.to_s => "can't be blank" }
+    attribute = I18n.translate("activerecord.attributes.user.#{e.param.to_s}")
+    message = I18n.translate("activerecord.errors.models.user.attributes.#{e.param.to_s}.blank", attribute: attribute)
+  	error_hash = { e.param.to_s => message }
   	respond_to do |format|
-  		format.json { render_jsend({fail: error_hash, render: {status: 400, message: "#{e.param.to_s.capitalize} can't be blank"}}) }
+  		format.json { render_jsend({fail: error_hash, render: { status: 400, message: message } }) }
   	end
   end
 

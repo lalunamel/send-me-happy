@@ -23,7 +23,7 @@ describe UsersController do
       get :show, :format => :json
 
       expect(response.status).to eq(400)
-      expect(response.body).to eq expected_jsend("fail", { id: "can't be blank" })
+      expect(response.body).to eq expected_jsend("fail", { id: I18n.translate("activerecord.errors.models.user.attributes.id.blank", attribute: "id") })
     end
 
     it "should return a 404 status and the proper json when a user can't be found" do
@@ -66,7 +66,7 @@ describe UsersController do
 
       expect(response.status).to eq 400
       expect(User.all.count).to eq originalUserCount
-      expect(response.body).to eq expected_jsend("fail", { phone: "can't be blank" })
+      expect(response.body).to eq expected_jsend("fail", { phone: I18n.translate("activerecord.errors.models.user.attributes.phone.blank", attribute: "phone number") })
     end
 
     it "should set the created user into the session" do
@@ -123,7 +123,7 @@ describe UsersController do
 
       expect(response.status).to eq 400
       expect(User.first).to eq @user
-      expect(response.body).to eq expected_jsend("fail", { id: "can't be blank" })
+      expect(response.body).to eq expected_jsend("fail", { id: I18n.translate("activerecord.errors.models.user.attributes.id.blank", attribute: "id") })
     end
 
     it "should not change anything about the user and return status = 200 when only the id is given" do
@@ -181,16 +181,16 @@ describe UsersController do
     end
     
     it "should render the proper json response on invalid token" do
-      @two_factor_serv.stub(:valid_token?) { 'is not correct' }
+      @two_factor_serv.stub(:valid_token?) { "foo" }
       post :verify, format: :json, verification_token: @token
     
-      expect(response.body).to eq expected_jsend("fail", { verification_token: "is not correct" })
+      expect(response.body).to eq expected_jsend("fail", { verification_token: "foo" })
       expect(response.status).to eq 400
     end
 
     it "should require a verification_code" do
       post :verify, format: :json
-      expect(response.body).to eq expected_jsend("fail", { verification_token: "can't be blank" })
+      expect(response.body).to eq expected_jsend("fail", { verification_token: "Please enter a verification code" })
       expect(response.status).to eq 400
     end
   end

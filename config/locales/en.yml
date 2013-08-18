@@ -25,6 +25,7 @@ en:
             user: "User"
         attributes:
             user:
+                id: "id"
                 phone: "phone number"
                 message_frequency: "message frequency"
                 verification_token: "verification code"
@@ -32,6 +33,8 @@ en:
             models:
                 user:
                     attributes:
+                        id:
+                            blank: "Please enter an %{attribute}"
                         phone:
                             blank: "Please enter a %{attribute}"
                             taken: "That %{attribute} is already registered"
@@ -42,6 +45,7 @@ en:
                             not_a_number: "Please enter a valid %{attribute}"
                             invalid: "Please enter a valid %{attribute}"
                         verification_token:
+                            blank: "Please enter a %{attribute}"
                             string: "Please enter a valid %{attribute}"
                             length: "Please enter a six digit %{attribute}"
                             age: "That %{attribute} has expired, please request a new one"
