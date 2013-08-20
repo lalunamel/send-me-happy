@@ -23,6 +23,15 @@ class UsersController < ApplicationController
   def update
     user = User.find(get_id)
     if user.update_attributes params.permit(:phone, :message_frequency)
+      if user.active == false
+        user.active = true
+        user.save!
+
+        message_frequency_template = Template.where(classification: "system").where("text LIKE '%_message_frequency_%'").first
+        sender = MessageSenderService.new user: user, template: message_frequency_template, interpolation: {_message_frequency_: user.message_frequency}
+        sender.deliver_message
+      end
+
       respond_to do |format|
         format.json { render_jsend(success: SerializerUtil::serialize_to_hash(user)) }
       end

@@ -106,7 +106,11 @@ describe UsersController do
 
   describe "PUT 'update'" do
     before :each do
-      @user = create :user, phone: "1231231234", message_frequency: 3
+      @user = create :user, phone: "1231231234", message_frequency: 3, active: true
+
+      sender_double = double("sender")
+      sender_double.stub(:deliver_message)
+      MessageSenderService.stub(:new) { sender_double }
     end
 
     it "should update the user and return the user" do
@@ -131,6 +135,28 @@ describe UsersController do
 
       expect(response.status).to eq 200
       expect(response.body).to eq expected_user_jsend(@user)
+    end
+
+    it "should active user if they are not active already" do
+      @user.active = false
+      @user.save!
+      put :update, format: :json, id: @user.id
+      expect(User.first.active).to eq true
+    end
+
+    it "should send a message with the user's schedule if they were not active before" do
+      @user.active = false
+      @user.save!
+      frequency_update_template = Template.where(classification: "system").where("text LIKE '%_message_frequency_%'").first
+
+      MessageSenderService.should_receive(:new).with(user: @user, template: frequency_update_template, interpolation: {_message_frequency_: @user.message_frequency})
+      put :update, format: :json, id: @user.id
+    end
+
+    it "should NOT send a message with the user's schedule if they were not active before" do
+      @user.active = true
+      MessageSenderService.should_not_receive(:send_message_like)
+      put :update, format: :json, id: @user.id
     end
   end
 

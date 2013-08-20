@@ -38,7 +38,7 @@ private
 		modified_text = text
 		if(@interpolation.present?)
 		    @interpolation.each do |key, value|
-		      modified_text = modified_text.gsub(key.to_s, value)
+		      modified_text = modified_text.gsub(key.to_s, value.to_s)
 		    end
 		end
 

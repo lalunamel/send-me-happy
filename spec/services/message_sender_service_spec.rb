@@ -56,7 +56,12 @@ describe MessageSenderService do
 
 		it "should return the same string if no interpolation hash is given" do
 			@service = MessageSenderService.new(user: @user, template: @template, interpolation: {})
-			expect(@service.send(:interpolate_text, @expected_output)).to eq @expected_output
+			expect(@service.send(:interpolate_text, @input)).to eq @input
+		end
+
+		it "should deal with ints without barfing" do
+			@service = MessageSenderService.new(user: @user, template: @template, interpolation: {_foo_bar_: 123 })
+			expect(@service.send(:interpolate_text, @input)).to eq "Hello my 123 name is"
 		end
 	end
 	
