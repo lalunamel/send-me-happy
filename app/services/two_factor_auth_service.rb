@@ -7,8 +7,7 @@ class TwoFactorAuthService
 	def send_verification_code
 		set_verification_code
 		verification_code_template = Template.where(classification: "system").where("text LIKE '%verification code%'").first
-		verification_code_template.text += @user.verification_token
-		sender = MessageSenderService.new user: @user, template: verification_code_template
+		sender = MessageSenderService.new user: @user, template: verification_code_template, interpolation: {_verification_code_: @user.verification_token}
 
 		sender.deliver_message
 	end

@@ -47,11 +47,8 @@ describe TwoFactorAuthService do
 			sender_service.should_receive :deliver_message
 			MessageSenderService.stub(:new) { sender_service }
 			verfication_code_template = Template.where(classification: "system").where("text LIKE '%verification code%'").first
-			verfication_code_template.text += "123456"
-			MessageSenderService.should_receive(:new).with(user: @user, template: verfication_code_template)
+			MessageSenderService.should_receive(:new).with(user: @user, template: verfication_code_template, interpolation: { _verification_code_: "123456"})
 		end
-		
-		
 	end
 
 	describe "#new_verification_token" do

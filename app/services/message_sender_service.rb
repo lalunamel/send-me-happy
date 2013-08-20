@@ -1,5 +1,5 @@
 class MessageSenderService
-	# TODO Combine initialize and deliver_message
+	# interpolation = a hash built as such: { string_to_be_replaced: new_string_to_be_put_in }
 	def initialize(args = {})
 		@user = args[:user]
 		@template = args[:template]
@@ -37,9 +37,9 @@ private
 	def interpolate_text(text)
 		modified_text = text
 		if(@interpolation.present?)
-	    @interpolation.each do |key, value|
-	      modified_text = modified_text.gsub(key.to_s, value)
-	    end
+		    @interpolation.each do |key, value|
+		      modified_text = modified_text.gsub(key.to_s, value)
+		    end
 		end
 
 		modified_text
