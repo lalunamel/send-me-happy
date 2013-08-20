@@ -58,7 +58,7 @@ Smh.StaticController.index = {
 
     		if(json.status === "fail") {
     			_.each(json.data, function(value, key) {
-    				message += [_(key).capitalize(), " ", value].join("");
+    				message += value;
     			});
     		}
     		else if(json.status === "error") {

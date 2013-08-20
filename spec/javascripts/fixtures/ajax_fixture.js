@@ -17,7 +17,7 @@ var AjaxFixture = {
 			responseJSON: {
 				"status":"fail",
 				"data": {
-					"phone":"has already been taken"
+					"phone":"That phone is already registered"
 				}
 			}
 		},
@@ -45,7 +45,7 @@ var AjaxFixture = {
 			responseJSON: {
 				"status":"fail",
 				"data":{
-					"verification_token":"can't be blank"
+					"verification_token":"Please enter a verification token"
 				}
 			}
 		},
@@ -53,7 +53,7 @@ var AjaxFixture = {
 			status: 500,
 			responseJSON: {
 			    "status": "error",
-			    "message": "The verification code you entered is not correct or is too old. Please request a new code"
+			    "message": "That verification code is not corrent"
 			}
 		}
 	},
@@ -76,7 +76,7 @@ var AjaxFixture = {
 			responseJSON: {
 				"status":"fail",
 				"data": {
-					"phone":"has already been taken"
+					"phone":"That phone is already registered"
 				}
 			}
 		},

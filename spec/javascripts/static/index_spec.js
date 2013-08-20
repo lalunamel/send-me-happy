@@ -157,7 +157,7 @@ describe("#submitData", function() {
 
 		it("should insert an error on failed response", function(){
 			$button.click();
-			expect(index.insertMessage).toHaveBeenCalledWith($input, "Phone has already been taken", true);
+			expect(index.insertMessage).toHaveBeenCalledWith($input, "That phone is already registered", true);
 		});
 
 		it("should stop a ladda when the ajax fails", function() {
