@@ -58,6 +58,7 @@ GEM
       railties (>= 3.0.0)
     ffi (1.9.0)
     forgery (0.5.0)
+    high_voltage (1.2.4)
     highline (1.6.19)
     hike (1.2.3)
     i18n (0.6.4)
@@ -187,6 +188,7 @@ DEPENDENCIES
   capistrano
   factory_girl_rails
   forgery
+  high_voltage
   indefinite_article
   jasmine
   jsend-rails

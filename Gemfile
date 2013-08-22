@@ -11,6 +11,7 @@ gem 'json'
 gem "active_model_serializers" # for formatting json responses
 gem 'jsend-rails' # for rendering jsend responses
 gem 'indefinite_article' # for prepending a or an to a word without or with a vowel
+gem 'high_voltage' # for static pages
 
 # gem 'jquery-rails'
 gem 'sass-rails', '~> 4.0.0'
