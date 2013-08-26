@@ -10,5 +10,8 @@
  *
  *= require_self
  *= require jquery-ui-1.10.3.custom.min.css
- *= require_tree .
+ *= require_tree ./layouts
+ *= require application.css
+ *= require ladda-themeless.min.css
+ *= require static.css
  */
