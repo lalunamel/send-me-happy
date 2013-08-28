@@ -5,6 +5,6 @@ SendMeHappy2::Application.routes.draw do
   post "users/(:id)/verify" => 'users#verify'
   post "users/(:id)/send_verification_code" => 'users#send_verification_code'
   
-  get "/" => 'static#index'
+  get '/' => 'high_voltage/pages#show', id: 'index'
   # match "*notaroute" => "application#routing_error", via: [:get, :post, :put, :delete]
 end

@@ -29,18 +29,20 @@ describe("#init", function() {
 describe('#handleEnter', function() {
 	beforeEach(function() {
 		index.init();
-		spyOn(Smh.StaticController.index, 'submitData');
+		spyOn(Smh.StaticController.index, 'submitData').andReturn({});
 	});
 
 	describe("on sections with only one button", function() {
 		var e, clickSpy;
 		beforeEach(function() {
 			clickSpy = spyOnEvent('.sign-up-flow-container .phone .button', 'click');
+			
 			e = $.Event('keydown');
 		});
 
 		it("should trigger a click on the nearest button when Enter is pressed", function() {
 			e.which = 13;
+			debugger
 			$phoneButton.siblings('input').trigger(e);
 
 			expect(clickSpy).toHaveBeenTriggered();
