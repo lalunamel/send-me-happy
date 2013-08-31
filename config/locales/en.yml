@@ -48,5 +48,5 @@ en:
                             blank: "Please enter a %{attribute}"
                             string: "Please enter a valid %{attribute}"
                             length: "Please enter a six digit %{attribute}"
-                            age: "That %{attribute} has expired, please request a new one"
+                            age: "That %{attribute} has expired"
                             invalid: "That %{attribute} is not correct"
