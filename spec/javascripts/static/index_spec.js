@@ -28,8 +28,8 @@ describe("#init", function() {
 
 describe('#handleEnter', function() {
 	beforeEach(function() {
+		spyOn(Smh.StaticController.index, 'submitData');	
 		index.init();
-		spyOn(Smh.StaticController.index, 'submitData').andReturn({});
 	});
 
 	describe("on sections with only one button", function() {
@@ -42,7 +42,6 @@ describe('#handleEnter', function() {
 
 		it("should trigger a click on the nearest button when Enter is pressed", function() {
 			e.which = 13;
-			debugger
 			$phoneButton.siblings('input').trigger(e);
 
 			expect(clickSpy).toHaveBeenTriggered();
@@ -75,7 +74,7 @@ describe('#handleEnter', function() {
 });
 
 describe("#submitData", function() {
-	var $button, event, spyEvent;
+	var $button, event, spyEvent, spyLadda, spyLaddaStart, spyLaddaStop;
 
 	beforeEach(function(){
 		$input = $('.sign-up-flow-container .phone input');
@@ -86,6 +85,10 @@ describe("#submitData", function() {
 		
 		spyEvent = spyOnEvent($('.sign-up-flow-container .phone .button'), 'click');
 		jasmine.Ajax.useMock();
+
+		spyLaddaStart = jasmine.createSpy();
+		spyLaddaStop = jasmine.createSpy();
+		var spyLadda = spyOn(Ladda, "create").andReturn({start: spyLaddaStart, stop: spyLaddaStop});
 
 		index.init();
 	});
@@ -108,18 +111,13 @@ describe("#submitData", function() {
 		});
 
 		it("should create a new ladda", function() {
-			spyOn(Ladda, 'create').andCallThrough();
 			$button.click();
 			expect(Ladda.create).toHaveBeenCalledWith($button[0]);
 		});
 
 		it("should start a ladda", function() {
-			var spyLadda = jasmine.createSpy();
-			spyLadda.start = jasmine.createSpy("start");
-			spyOn(Ladda, 'create').andReturn(spyLadda);
-
 			$button.click();
-			expect(spyLadda.start).toHaveBeenCalled();
+			expect(spyLaddaStart).toHaveBeenCalled();
 		});
 
 		it("should call resetMessage", function() {
@@ -135,12 +133,8 @@ describe("#submitData", function() {
 		});
 
 		it("should stop a ladda when the ajax succeeds", function() {
-			var spyLadda = jasmine.createSpy();
-			spyLadda.start = $.noop;
-			spyOn(Ladda, 'create').andReturn(spyLadda);
-			spyLadda.stop = jasmine.createSpy("stop");
 			$button.click();
-			expect(spyLadda.stop).toHaveBeenCalled();
+			expect(spyLaddaStop).toHaveBeenCalled();
 		});
 
 		it("should not call slideSectionUp when a button without class .forward is pressed", function() {
@@ -163,12 +157,8 @@ describe("#submitData", function() {
 		});
 
 		it("should stop a ladda when the ajax fails", function() {
-			var spyLadda = jasmine.createSpy();
-			spyLadda.start = $.noop;
-			spyOn(Ladda, 'create').andReturn(spyLadda);
-			spyLadda.stop = jasmine.createSpy("stop");
 			$button.click();
-			expect(spyLadda.stop).toHaveBeenCalled();
+			expect(spyLaddaStop).toHaveBeenCalled();
 		});
 	});
 
@@ -191,13 +181,14 @@ describe("#submitData", function() {
 });
 
 describe("#insertMessage", function() {
-	var $section, message, $input;
+	var $section, message, longMessage, $input;
 	
 	beforeEach(function() {
 		$section = $('.sign-up-flow-container .phone');
 		$input = $section.find("input");
 		$input.val("robotz");
 		message = "hello world!";
+		longMessage = "Hello world this is a really long message"
 	});
 	
 	it("should insert a message inside the input placeholder", function() {
@@ -231,11 +222,16 @@ describe("resetMessage", function() {
 
 
 	describe("successful case", function() {
+		var originalWidth;
 		beforeEach(function() {
 			$input = $('.phone input');
 			$input.addClass("error");
 			$input.attr("data-placeholder", message);
 			$input.attr("placeholder", error);
+
+			originalWidth = $input.width();
+			$input.data("width", originalWidth);
+			$input.css("width", "300px");
 
 			index.resetMessage($input);
 		});
@@ -262,6 +258,4 @@ describe("resetMessage", function() {
 			expect($input.attr('placeholder')).toBe("ERROR DOES NOT COMPUTE");
 		});
 	});
-
-
 });
