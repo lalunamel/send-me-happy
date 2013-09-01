@@ -14,4 +14,6 @@
 //= require jquery-ui-1.10.3.custom.min.js
 //= require underscore.js
 //= require underscore.string.min.js
+//= require ladda_spin.min.js
+//= require ladda.min.js
 //= require_tree .
