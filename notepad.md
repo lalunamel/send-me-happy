@@ -46,16 +46,34 @@ message: 'Twillio invalid phone number 12345 can't be a phone number'
 ### Verifying a user's code
 Requires that the server knows which verification code to compare against when verifying an input code.
 Options:
-* Store in session -> This seems pretty cool, but need more research
+* Store in session -* This seems pretty cool, but need more research
 * Store in hidden input on page -> Simple, but not very elegant
+
+### Async message delivery
+## How to notify client of message status?
+Normally, message are sent sychronously, which means the server finishes its request afer a message has either been sent or has errored out.
+With aysnchronous message delivery, the server will finish it's request before the message has been sent.  	
+**The scheme is now as follows:**  
+
+* The user makes a request to send a message via the API
+* The server enqueues a job using stalker
+* A stalker worker picks up that job and makes a call to the twilio api
+* The stalker job does ??? to signal the status of the completed request to twilio.
+
+**How to signal the status of a message sending request to the client** 
+
+* Client pings server - server keeps status of message in db
+* Push the status from server -> client
+* initial request (the one that enqueues the message) hangs until job has finished, job signals it's status to initial request, initial request receives status and returns
+* somehow do callbacks
 
 ## User Interface
 ### How should the user be notified that an action has been completed (message sent, verification code accepted, user updated properly)
-* On success, hide current successful input, and show next. 
+	* On success, hide current successful input, and show next. 
 (User enters phone successfully, phone input dissapears and verification code input appears in it's place)
 In this case, only one input is visible at a time
-* Show success messages
-* Input would be highlighted 
+	* Show success messages
+	* Input would be highlighted 
 
 ### Verification code resend
 How should requesting another verification code be handled?
@@ -79,15 +97,19 @@ That message frequency is not valid
 
 ## Jasmine tests
 ### Mocking ajax requests
-*return hand created json file
-> Slow
-> Probably not accurate
-> Annoying
-> No set up!
-*call through to server and get real json back
-> fast
-> easy?
-> no easy way to stop from making other network requests (twilio)
-*record json requests with some util and store them in a fixture
-> requires me writing it
-> accurate
+####return hand created json file  
+	* Slow
+	* Probably not accurate
+	* Annoying
+	* No set up!
+
+
+####call through to server and get real json back  
+	* fast
+	* easy?
+	* no easy way to stop from making other network requests (twilio)
+
+
+####record json requests with some util and store them in a fixture  
+	* requires me writing it
+	* accurate

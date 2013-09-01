@@ -30,6 +30,7 @@ GEM
     arel (4.0.0)
     atomic (1.1.10)
     bcrypt-ruby (3.0.1)
+    beanstalk-client (1.1.1)
     builder (3.1.4)
     byebug (1.5.0)
       columnize (~> 0.3.6)
@@ -73,6 +74,7 @@ GEM
     jsend-rails (1.1.0)
       rails (>= 3.0.0)
     json (1.8.0)
+    json_pure (1.8.0)
     jwt (0.1.8)
       multi_json (>= 1.5)
     libv8 (3.11.8.17)
@@ -158,6 +160,9 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (~> 2.8)
+    stalker (0.9.0)
+      beanstalk-client
+      json_pure
     therubyracer (0.11.4)
       libv8 (~> 3.11.8.12)
       ref
@@ -201,6 +206,7 @@ DEPENDENCIES
   rspec-rails (~> 2.0)
   sass-rails (~> 4.0.0)
   sdoc
+  stalker
   therubyracer
   twilio-ruby
   uglifier (>= 1.3.0)
