@@ -16,4 +16,5 @@
 //= require underscore.string.min.js
 //= require ladda_spin.min.js
 //= require ladda.min.js
+//= require backbone.js
 //= require_tree .
