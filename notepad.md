@@ -63,9 +63,16 @@ With aysnchronous message delivery, the server will finish it's request before t
 **How to signal the status of a message sending request to the client** 
 
 * Client pings server - server keeps status of message in db
+    > Slow
+    > Probably want to make a new endpoint for this
 * Push the status from server -> client
+    > Have to learn how to do this one
+    > Have to set up a receiver on the client probably
 * initial request (the one that enqueues the message) hangs until job has finished, job signals it's status to initial request, initial request receives status and returns
+    > Basically the same thing that happens currently
 * somehow do callbacks
+    > Same as the push status option
+* don't do async requests on user create or update, only on mass message sending
 
 ## User Interface
 ### How should the user be notified that an action has been completed (message sent, verification code accepted, user updated properly)
