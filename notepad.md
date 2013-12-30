@@ -50,7 +50,7 @@ Options:
 * Store in hidden input on page -> Simple, but not very elegant
 
 ### Async message delivery
-## How to notify client of message status?
+#### How to notify client of message status?
 Normally, message are sent sychronously, which means the server finishes its request afer a message has either been sent or has errored out.
 With aysnchronous message delivery, the server will finish it's request before the message has been sent.  	
 **The scheme is now as follows:**  
@@ -73,6 +73,20 @@ With aysnchronous message delivery, the server will finish it's request before t
 * somehow do callbacks
     > Same as the push status option
 * don't do async requests on user create or update, only on mass message sending
+
+### Sending the user's first message on completion of sign up
+After a user has completed the sign up process, they should recieve their first message.
+This presents a problem because the final step in the user sign up flow is just a PUT /user update.
+So, how should this be solved?
+
+1. Include a flag in the update call to optionally send a message.
+	* This isn't a very DRY method
+2. Create a new endpoint at /user/##/messages/##/send
+	* Kinda seems like overkill in this situation
+	* This endpoint would not be able to send messages to other people's phones
+	* you would need the message id, or be able to specify the message to send by it's content
+		* eg. I want to send the message with "message_frequency" in it
+	
 
 ## User Interface
 ### How should the user be notified that an action has been completed (message sent, verification code accepted, user updated properly)

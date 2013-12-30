@@ -13,6 +13,7 @@ gem 'jsend-rails' # for rendering jsend responses
 gem 'indefinite_article' # for prepending a or an to a word without or with a vowel
 gem 'high_voltage' # for static pages
 gem 'stalker' # for beanstalkd job queuing
+gem 'clockwork' # for running tasks on a schedule
 
 # gem 'jquery-rails'
 gem 'sass-rails', '~> 4.0.0'
