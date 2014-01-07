@@ -18,3 +18,4 @@ pickle-email-*.html
 .project
 /.idea/*
 mysql-connector*
+config/environment.rb
